@@ -6,23 +6,23 @@ import unittest
 class TestEventSystem(unittest.TestCase):
     def setUp(self):
         # remettre l'etat initial entre tests
-        EventSystem._event_classes.clear()
-        EventSystem._listeners.clear()
+        SystemEvenement._event_classes.clear()
+        SystemEvenement._listeners.clear()
 
     def test_event_tache_effectuer_arriere_plan(self):
-        @EventSystem.enregistrer_event
+        @SystemEvenement.enregistrer_event
         class TestEvent:
             def __init__(self):
                 pass
 
         executed = []
 
-        @EventSystem.listener("TestEvent")
+        @SystemEvenement.ecouter("TestEvent")
         def listener(event):
             executed.append("ok")
 
         start = time.time()
-        EventSystem.envoyer(TestEvent())
+        SystemEvenement.envoyer(TestEvent())
         elapsed = time.time() - start
 
         # envoyer() ne doit pas bloquer
@@ -37,7 +37,7 @@ class TestEventSystem(unittest.TestCase):
 
 
     def test_tout_les_events_sont_executer(self):
-        @EventSystem.enregistrer_event
+        @SystemEvenement.enregistrer_event
         class TestEvent:
             def __init__(self, i):
                 self.i = i
@@ -45,12 +45,12 @@ class TestEventSystem(unittest.TestCase):
 
         results = []
 
-        @EventSystem.listener("TestEvent")
+        @SystemEvenement.ecouter("TestEvent")
         def listener(event):
             results.append(event.i)
 
         for i in range(5):
-            EventSystem.envoyer(TestEvent(i))
+            SystemEvenement.envoyer(TestEvent(i))
 
         timeout = time.time() + 1
         while len(results) < 5 and time.time() < timeout:
@@ -59,7 +59,7 @@ class TestEventSystem(unittest.TestCase):
         self.assertEqual(sorted(results), [0, 1, 2, 3, 4])
 
     def test_listener_fonctionne_sur_autre_thread(self):
-        @EventSystem.enregistrer_event
+        @SystemEvenement.enregistrer_event
         class TestEvent:
             def __init__(self):
                 pass
@@ -68,13 +68,13 @@ class TestEventSystem(unittest.TestCase):
         listener_thread = None
         done = threading.Event()
 
-        @EventSystem.listener("TestEvent")
+        @SystemEvenement.ecouter("TestEvent")
         def listener(event):
             nonlocal listener_thread
             listener_thread = threading.get_ident()
             done.set()
 
-        EventSystem.envoyer(TestEvent())
+        SystemEvenement.envoyer(TestEvent())
 
         self.assertTrue(done.wait(timeout=1))
         self.assertNotEqual(calling_thread, listener_thread)

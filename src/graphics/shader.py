@@ -1,16 +1,14 @@
-import os.path
-
 from OpenGL.GL import *
 from ctypes import c_uint
 
+from src.math.matrices import *
+from src.math.vectors import *
+
+
 class Shader:
-    def __init__(self, shaderName: str):
+    def __init__(self, contentV: str,contentF:str):
         # Creer un programme OpenGL vide
         self.__program = glCreateProgram()
-
-        # Lire le code source des fichiers
-        contentV = self.__readShaderFile(shaderName + ".vert")
-        contentF = self.__readShaderFile(shaderName + ".frag")
 
         if contentV is None:
             print("Erreur dans la lecture du fichier vertex shader")
@@ -48,17 +46,6 @@ class Shader:
         glDeleteShader(vertexShader)
         glDeleteShader(fragmentShader)
 
-    def __readShaderFile(self, name: str):
-        chemin = os.path.join(os.path.dirname(__file__),"shaders",f"{name}.glsl")
-        try:
-            return open(chemin).read()
-        except FileNotFoundError:
-            print(f"Fichier {chemin} n'existe pas")
-            exit(1)
-        except Exception as e:
-            print(f"Erreur dans la lecture du fichier {chemin} : {e}")
-            exit(1)
-
     def use(self):
         glUseProgram(self.__program)
 
@@ -90,5 +77,8 @@ class Shader:
     def setVec3f(self, name: str, v0: float, v1: float, v2: float):
         glUniform3f(glGetUniformLocation(self.__program, name), v0, v1, v2)
 
-    def setMat3f(self,name:str,matrix,transpose:bool=False):
-        glUniformMatrix3fv(glGetUniformLocation(self.__program, name),1,GL_TRUE if transpose else GL_FALSE,matrix)
+    def setMat3f(self,name:str,matrix:Mat3):
+        glUniformMatrix3fv(glGetUniformLocation(self.__program, name),1,GL_TRUE,matrix.getData())
+
+    def setMat4f(self,name:str,matrix:Mat4):
+        glUniformMatrix4fv(glGetUniformLocation(self.__program, name),1,GL_TRUE,matrix.getData())

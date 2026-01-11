@@ -1,4 +1,3 @@
-import threading
 import time
 from src.event.event import *
 import unittest

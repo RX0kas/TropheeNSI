@@ -84,17 +84,20 @@ class Window:
         """
         return window_should_close(self.__window)
 
-    def getWindow(self):
+    def get_window(self):
         return self.__window
 
-    def getTime(self) -> float:
+    def get_time(self) -> float:
         return get_time()
 
-    def getHeight(self) -> float:
+    def get_height(self) -> float:
         return self.__height
 
-    def getWidth(self) -> float:
+    def get_width(self) -> float:
         return self.__width
+
+    def get_aspect(self):
+        return self.__width/self.__height
 
     @staticmethod
     def instance() -> "Window":

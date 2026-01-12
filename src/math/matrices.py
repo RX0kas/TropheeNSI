@@ -61,13 +61,15 @@ class Mat4:
         """
         Src https://github.com/g-truc/glm/blob/b1fed407864225653dae04674f04014c92287a26/glm/ext/matrix_clip_space.inl
         """
-        mat = Mat4([1.0 for _ in range(16)])
+        mat = Mat4()
 
-        mat[0,0] = 2.0/ (right-left)
-        mat[1,1] = 2.0/ (top-bottom)
-        mat[2,2] = 1
-        mat[3,0] = -(right+left)/(right-left)
-        mat[3,1] = -(top+bottom)/(top-bottom)
+        mat[0, 0] = 2.0 / (right - left)
+        mat[1, 1] = 2.0 / (top - bottom)
+        mat[2, 2] = -1.0
+        mat[3, 3] = 1.0
+
+        mat[3, 0] = -(right + left) / (right - left)
+        mat[3, 1] = -(top + bottom) / (top - bottom)
 
         return mat
 
@@ -94,17 +96,17 @@ class Mat3(Mat4):
 
         cosO = cos(angle)
         sinO = sin(angle)
-
+        
         mat[0, 0] = cosO * taille.x
-        mat[1, 0] = -sinO * taille.y
-        mat[2, 0] = pos.x
+        mat[1, 0] = sinO * taille.x
+        mat[2, 0] = 0.0
 
-        mat[0, 1] = sinO * taille.x
+        mat[0, 1] = -sinO * taille.y
         mat[1, 1] = cosO * taille.y
-        mat[2, 1] = pos.y
+        mat[2, 1] = 0.0
 
-        mat[0, 2] = 0
-        mat[1, 2] = 0
-        mat[2, 2] = 1
+        mat[0, 2] = pos.x
+        mat[1, 2] = pos.y
+        mat[2, 2] = 1.0
 
         return mat

@@ -39,8 +39,8 @@ class Camera:
         view[2,2] = 1.0
         view[3,3] = 1.0
 
-        view[3,0] = -self.position.x * cosrot - self.position.y * sinrot
-        view[3,1] = self.position.x * sinrot - self.position.y * cosrot
+        view[0,3] = -self.position.x * cosrot - self.position.y * sinrot
+        view[1,3] = self.position.x * sinrot - self.position.y * cosrot
 
         return view
 

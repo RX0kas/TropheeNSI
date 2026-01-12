@@ -3,7 +3,7 @@ import functools
 import queue
 import threading
 
-# TODO: Ajouter une class Event pour faire l'enregistrement plus simplement
+
 class SystemEvenement:
     _event_classes = {}
     _listeners = {}

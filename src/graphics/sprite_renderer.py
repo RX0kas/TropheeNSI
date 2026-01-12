@@ -3,7 +3,6 @@ from src.graphics.shader import Shader
 from src.math.matrices import *
 from src.math.vectors import Vec2
 
-# TODO: Faire une class sprite pour rendre l'affichage plus simple
 class SpriteRenderer:
     def __init__(self, shader: Shader):
         self.shader = shader

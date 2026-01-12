@@ -24,12 +24,12 @@ class Application:
         except Exception as e:
             print("PyOpenGL can't query GL_VERSION yet:", e)
 
-        self.__main_shader = Shader(open(os.path.join("shaders","main.vert")).read(),open(os.path.join("shaders","main.frag")).read()) # TODO: ecrire les sources directements dans une variable pour n'avoir que des fichiers .py
+        self.__main_shader = Shader(open(os.path.join("shaders","main.vert")).read(),open(os.path.join("shaders","main.frag")).read())
 
         self.__camera = Camera()
         self.__sprite_renderer = SpriteRenderer(self.__main_shader)
 
-    def generer_texture(self): # TODO: faire une class texture et TextureManager
+    def generer_texture(self):
         image = Image.open("prototype.png").convert("RGBA")
         width, height = image.size
         image_data = image.tobytes()
@@ -60,14 +60,14 @@ class Application:
             currentFrame = self.__fenetre.get_time()
             deltaTime = currentFrame - lastFrame
             lastFrame = currentFrame
-            glClearColor(0.2, 0.2, 0.2, 1.0)
+            glClearColor(1, 1, 1, 1.0)
             glClear(GL_COLOR_BUFFER_BIT)
 
             self.__main_shader.use()
             self.__main_shader.setInt("uTexture", 0)
             self.__main_shader.setMat4f("view_projection_matrix", self.__camera.get_view_projection_matrix())
 
-            self.__sprite_renderer.render_sprite(texture, Vec2(0, 0), Vec2(1, 1), 0, [1.0, 1.0, 1.0])
+            self.__sprite_renderer.render_sprite(texture, Vec2(-5, -5), Vec2(10, 10), 0, [1, 1, 1])
 
             glfw.swap_buffers(self.__fenetre.get_window())
 

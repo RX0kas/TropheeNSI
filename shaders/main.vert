@@ -3,14 +3,14 @@
 layout (location = 0) in vec2 position;
 layout (location = 1) in vec2 tex_coords;
 
-
-out vec2 texture_coords;
+out vec2 TexCoords;
 
 uniform mat3 model_matrix;
 uniform mat4 view_projection_matrix;
 
-void main() {
-    texture_coords = tex_coords;
+void main()
+{
+    TexCoords = tex_coords;
 
     // coord Model -> coord Monde
     vec3 pos = model_matrix * vec3(position, 1.0);

@@ -1,7 +1,8 @@
 from OpenGL.GL import *
 from src.graphics.shader import Shader
 from src.math.matrices import *
-from src.math.vectors import Vec2
+from src.math.vectors import *
+from src.graphics.sprite import *
 
 class SpriteRenderer:
     def __init__(self, shader: Shader):
@@ -43,16 +44,16 @@ class SpriteRenderer:
 
 
 
-    def render_sprite(self,texture,position:Vec2,taille:Vec2,rotation:float,couleur):
+    def render_sprite(self,sprite:Sprite):
         self.shader.use()
-        model_matrix = Mat3.model(rotation,position,taille)
+        model_matrix = Mat3.model(sprite.rotation,sprite.position,sprite.taille)
 
         self.shader.setMat3f("model_matrix",model_matrix)
-        self.shader.setVec3f("couleur",couleur[0],couleur[1],couleur[2])
+        self.shader.setVec3f("couleur",sprite.couleur)
 
         # envoie de la texture
         glActiveTexture(GL_TEXTURE0)
-        glBindTexture(GL_TEXTURE_2D,texture)
+        glBindTexture(GL_TEXTURE_2D,sprite.texture)
 
         glBindVertexArray(self.vertex_array)
         glDrawArrays(GL_TRIANGLES,0,6)

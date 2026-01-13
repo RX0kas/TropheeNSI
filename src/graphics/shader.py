@@ -74,8 +74,8 @@ class Shader:
     def setVec2f(self, name: str, v0: float, v1: float):
         glUniform2f(glGetUniformLocation(self.__program, name), v0, v1)
 
-    def setVec3f(self, name: str, v0: float, v1: float, v2: float):
-        glUniform3f(glGetUniformLocation(self.__program, name), v0, v1, v2)
+    def setVec3f(self, name: str, v:Vec3):
+        glUniform3f(glGetUniformLocation(self.__program, name), v.x, v.y, v.z)
 
     def setMat3f(self,name:str,matrix:Mat3):
         glUniformMatrix3fv(glGetUniformLocation(self.__program, name),1,GL_TRUE,matrix.getData())

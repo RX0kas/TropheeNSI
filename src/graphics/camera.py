@@ -17,7 +17,7 @@ class Camera:
         :return: une matrice qui va servir a definir ce que l'on peut voir sur l'écran
         """
         aspect = Window.instance().get_aspect()
-        hauteurVue = 10 # hauteur de la fenetre lorsque le zoom est de 1
+        hauteurVue = 100 # hauteur de la fenetre lorsque le zoom est de 1
 
         hauteur = hauteurVue / self.zoom
         largeur = hauteur * aspect

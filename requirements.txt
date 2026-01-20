@@ -1,3 +1,4 @@
 glfw~=2.10.0
 pyopengl~=3.1.10
 pillow~=12.1.0
+numpy # Dependance de pyopengl mais pas utiliser dans notre projet

@@ -30,34 +30,12 @@ class Application:
         self.__camera = Camera()
         self.__sprite_renderer = SpriteRenderer(self.__main_shader)
 
-    def generer_texture(self):
-        image = Image.open("prototype.png").convert("RGBA")
-        width, height = image.size
-        image_data = image.tobytes()
-
-        texture_id = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, texture_id)
-
-        # parametre
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-
-        glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,image_data)
-        glGenerateMipmap(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, 0)
-        return texture_id
-
-
     def run(self):
-
-        texture = self.generer_texture()
         self.__fenetre.show()
 
         lastFrame = 0.0
         
-        test_image = Sprite(texture,pos=Vec2(-5,-5),taille=Vec2(10,10))
+        test_image = Sprite("prototype.png",pos=Vec2(-5,-5),taille=Vec2(10,10))
         time = 0
         
         while not self.__fenetre.devrait_fermer():

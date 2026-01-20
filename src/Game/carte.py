@@ -25,3 +25,6 @@ class Carte:
 
     def __str__(self) -> str:
         return f"{self.dict_transi_val[self.val]} de {self.dict_transi_cou[self.cou]}"
+    
+    def dead(self) -> None:
+        del self

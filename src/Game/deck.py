@@ -15,7 +15,10 @@ class Deck:
     contenue = property(__get_contenue,__set_contenue)
     
     def est_vide(self) -> bool:
-        return len(self.contenue) == 0
+        return self.nb_carte == 0
+    
+    def nb_carte(self) -> int:
+        return len(self.contenue)
     
     def tirer_carte(self) -> Carte|None:
         if self.est_vide():
@@ -41,6 +44,9 @@ class Deck:
     def vider_dans(self,deck2 : "Deck"):
         while not self.est_vide():
             deck2.rajouter_carte(self.tirer_carte())
+
+    def dead(self) -> None:
+        del self
 
     
     

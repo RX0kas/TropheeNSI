@@ -53,7 +53,7 @@ class SpriteRenderer:
 
         # envoie de la texture
         glActiveTexture(GL_TEXTURE0)
-        glBindTexture(GL_TEXTURE_2D,sprite.texture)
+        glBindTexture(GL_TEXTURE_2D,sprite.texture.id)
 
         glBindVertexArray(self.vertex_array)
         glDrawArrays(GL_TRIANGLES,0,6)

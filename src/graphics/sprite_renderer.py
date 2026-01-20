@@ -5,10 +5,15 @@ from src.math.vectors import *
 from src.graphics.sprite import *
 
 class SpriteRenderer:
-    def __init__(self, shader: Shader):
+    """
+    Batch renderer fait en s'inspirant de https://jasonliang.js.org/batch-renderer.html
+    """
+    def __init__(self, shader: Shader,capacite:int=1024):
         self.shader = shader
-
-        vertices = [
+        self.__nombre_vertex = 0
+        self.__capacite_vertex = capacite
+        self.__vertex = []
+        self.sprite_vertices = [
             0.0, 1.0,  0.0, 1.0,
             1.0, 0.0,  1.0, 0.0,
             0.0, 0.0,  0.0, 0.0,
@@ -27,7 +32,9 @@ class SpriteRenderer:
 
         # initialisation vertex buffer object
         glBindBuffer(GL_ARRAY_BUFFER, self.vertex_buffer_object)
-        glBufferData(GL_ARRAY_BUFFER,len(vertices) * sizeof(GLfloat),(GLfloat * len(vertices))(*vertices),GL_STATIC_DRAW)
+        taille_memoire_alouer = (len(self.sprite_vertices) * sizeof(GLfloat))*self.__capacite_vertex
+        print(f"Allocution de {taille_memoire_alouer}o pour le vbo")
+        glBufferData(GL_ARRAY_BUFFER,taille_memoire_alouer,GL_NONE,GL_DYNAMIC_DRAW)
 
         stride = 4 * sizeof(GLfloat)
 
@@ -42,8 +49,17 @@ class SpriteRenderer:
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
 
+    def dessiner(self):
+        pass
 
-
+    def envoyer(self,sprite:Sprite):
+        # TODO: utiliser le model matrice
+        if self.__nombre_vertex>=self.__capacite_vertex:
+            self.dessiner()
+        
+        
+        
+        
     def render_sprite(self,sprite:Sprite):
         self.shader.use()
         model_matrix = Mat3.model(sprite.rotation,sprite.position,sprite.taille)

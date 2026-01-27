@@ -48,34 +48,35 @@ class SpriteRenderer:
         glBindVertexArray(0)"""
 
     @classmethod
-    def creer_vertex_array(cls,uv,x,y) -> int:
-        w = Camera.taille_fenetre
-        h = Camera.taille_fenetre
+    def creer_vertex_array(cls, uv) -> int:
         vertices = [
-            x,y,        uv.u0,uv.v1,
-            x+w,y,      uv.u1,uv.v1,
-            x+w,y+h,    uv.u1,uv.v0,
-            x,y,        uv.u0,uv.v1,
-            x+w,y+h,    uv.u1,uv.v0,
-            x,y+h,      uv.u0,uv.v0
+            # positions     # texture coords
+            0.0, 0.0,       uv.u0, uv.v1,  # bottom-left
+            1.0, 0.0,       uv.u1, uv.v1,  # bottom-right
+            1.0, 1.0,       uv.u1, uv.v0,  # top-right
+            0.0, 0.0,       uv.u0, uv.v1,  # bottom-left
+            1.0, 1.0,       uv.u1, uv.v0,  # top-right
+            0.0, 1.0,       uv.u0, uv.v0  # top-left
         ]
-               
-        # creation objet opengl
+
+        # creation objets opengl
         vertex_buffer_object = glGenBuffers(1)
         vertex_array = glGenVertexArrays(1)
-        
-        # initialisation vertex buffer object
-        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_object)
+
+        # initialisation
         glBindVertexArray(vertex_array)
-        
-        glBufferData(GL_ARRAY_BUFFER,len(vertices) * sizeof(GLfloat),(GLfloat * len(vertices))(*vertices),GL_STATIC_DRAW)
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_object)
+
+        glBufferData(GL_ARRAY_BUFFER, len(vertices) * sizeof(GLfloat),(GLfloat * len(vertices))(*vertices), GL_STATIC_DRAW)
+
         stride = 4 * sizeof(GLfloat)
         # position
         glEnableVertexAttribArray(0)
-        glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE,stride,ctypes.c_void_p(0))
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, ctypes.c_void_p(0))
         # texture coords
         glEnableVertexAttribArray(1)
-        glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,stride,ctypes.c_void_p(2 * sizeof(GLfloat)))
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride,
+                              ctypes.c_void_p(2 * sizeof(GLfloat)))
 
         glBindVertexArray(0)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
@@ -89,18 +90,24 @@ class SpriteRenderer:
         if self.__nombre_vertex>=self.__capacite_vertex:
             self.dessiner()"""
         pass
-        
-        
-    def render_sprite(self,sprite:Sprite):
-        if sprite.va is None:
-            sprite.va = self.creer_vertex_array(TextureManager.getUV(sprite.texture_id),sprite.position.x,sprite.position.y)
-        
-        self.shader.use()
-        model_matrix = Mat3.model(sprite.rotation,sprite.position,sprite.taille)
 
-        self.shader.setMat3f("model_matrix",model_matrix)
-        self.shader.setVec3f("couleur",sprite.couleur)
+    def render_sprite(self, sprite: Sprite):
+        if sprite.va is None:
+            sprite.va = self.creer_vertex_array(TextureManager.getUV(sprite.texture_id))
+
+        self.shader.use()
+
+
+        # active la texture atlas
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, TextureManager.atlas_id)
+        self.shader.setInt("uTexture", 0)
+
+        # Matrice model
+        model_matrix = Mat3.model(sprite.rotation, sprite.position, sprite.taille)
+        self.shader.setMat3f("model_matrix", model_matrix)
+        self.shader.setVec3f("couleur", sprite.couleur)
 
         glBindVertexArray(sprite.va)
-        glDrawArrays(GL_TRIANGLES,0,6)
+        glDrawArrays(GL_TRIANGLES, 0, 6)
         glBindVertexArray(0)

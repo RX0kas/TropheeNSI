@@ -50,6 +50,9 @@ class Application:
 
             self.__main_shader.use()
             self.__main_shader.setMat4f("view_projection_matrix", self.__camera.get_view_projection_matrix())
+            glActiveTexture(GL_TEXTURE0)
+            glBindTexture(GL_TEXTURE_2D, TextureManager.atlas_id)
+            self.__main_shader.setInt("uTexture", 0)
 
             self.__sprite_renderer.render_sprite(test_image)
 

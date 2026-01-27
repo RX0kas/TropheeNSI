@@ -13,8 +13,8 @@ void main()
     TexCoords = tex_coords;
 
     // coord Model -> coord Monde
-    vec3 pos = /*model_matrix * */vec3(position, 1.0);
+    vec3 world_pos = model_matrix * vec3(position, 1.0);
 
     // deplacement du monde pour simuler une camera
-    gl_Position = view_projection_matrix * vec4(pos.xy, 0.0, 1.0);
+    gl_Position = view_projection_matrix * vec4(world_pos.xy, 0.0, 1.0);
 }

@@ -1,4 +1,0 @@
-Ajouter une class Event pour faire l'enregistrement plus simplement
-ecrire les sources directements dans une variable pour n'avoir que des fichiers .py
-faire une class texture et TextureManager
-faire un batch renderer pour afficher tout avec un seul drawCall (plus de performances)

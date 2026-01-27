@@ -7,6 +7,7 @@ class Camera:
     position = Vec2() # Centre de la caméra
     zoom = 1.0
     rotation = 0.0 # rotation en degrés
+    taille_fenetre = 100 # hauteur de la fenetre lorsque le zoom est de 1
 
     def __init__(self):
         pass
@@ -17,9 +18,8 @@ class Camera:
         :return: une matrice qui va servir a definir ce que l'on peut voir sur l'écran
         """
         aspect = Window.instance().get_aspect()
-        hauteurVue = 100 # hauteur de la fenetre lorsque le zoom est de 1
 
-        hauteur = hauteurVue / self.zoom
+        hauteur = Camera.taille_fenetre / self.zoom
         largeur = hauteur * aspect
         return Mat4.orthographic(-largeur/2,largeur/2,-hauteur/2,hauteur/2)
 

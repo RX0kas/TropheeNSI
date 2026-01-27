@@ -1,5 +1,6 @@
 from OpenGL.GL import *
 from ctypes import c_uint
+from src.graphics.texture import TextureManager
 
 from src.math.matrices import *
 from src.math.vectors import *
@@ -82,3 +83,7 @@ class Shader:
 
     def setMat4f(self,name:str,matrix:Mat4):
         glUniformMatrix4fv(glGetUniformLocation(self.__program, name),1,GL_TRUE,matrix.getData())
+    
+    def useAtlas(self):
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D,TextureManager.atlas_id)

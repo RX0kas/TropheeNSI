@@ -10,6 +10,7 @@ from src.graphics.shader import Shader
 from src.graphics.sprite_renderer import SpriteRenderer
 from src.graphics.sprite import Sprite
 from src.math.vectors import Vec2
+from src.graphics.texture import TextureManager
 
 
 class Application:
@@ -38,6 +39,7 @@ class Application:
         test_image = Sprite("prototype.png",pos=Vec2(-5,-5),taille=Vec2(10,10))
         time = 0
         
+        TextureManager.generer_texture_atlas()
         while not self.__fenetre.devrait_fermer():
             glfw.poll_events()
             currentFrame = self.__fenetre.get_time()
@@ -47,7 +49,6 @@ class Application:
             glClear(GL_COLOR_BUFFER_BIT)
 
             self.__main_shader.use()
-            self.__main_shader.setInt("uTexture", 0)
             self.__main_shader.setMat4f("view_projection_matrix", self.__camera.get_view_projection_matrix())
 
             self.__sprite_renderer.render_sprite(test_image)

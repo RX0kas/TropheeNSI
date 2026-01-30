@@ -54,7 +54,8 @@ class Application:
             glBindTexture(GL_TEXTURE_2D, TextureManager.atlas_id)
             self.__main_shader.setInt("uTexture", 0)
 
-            self.__sprite_renderer.render_sprite(test_image)
+            self.__sprite_renderer.envoyer(test_image)
+            self.__sprite_renderer.dessiner()
 
             glfw.swap_buffers(self.__fenetre.get_window())
             time += deltaTime

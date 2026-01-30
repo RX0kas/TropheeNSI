@@ -20,6 +20,14 @@ class UV:
     v0:float
     u1:float
     v1:float
+
+    def __getitem__(self,i):
+        if i==0: return self.u0
+        if i==1: return self.v0
+        if i==2: return self.u1
+        if i==3: return self.v1
+        print(f"UV[{i}] n'est pas autoriser")
+        
     
 class TextureManager:
     atlas_id = -1
@@ -88,7 +96,7 @@ class TextureManager:
     
     
     @classmethod
-    def getUV(cls,index):
+    def getUV(cls,index) -> UV:
         return cls.__uvs[index]
 
 

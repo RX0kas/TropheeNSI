@@ -3,14 +3,6 @@ from PIL import Image
 from math import ceil,sqrt
 from dataclasses import dataclass
 
-class Texture:
-    def __init__(self,path:str):
-        self.__path = path
-        
-    def __getPath(self): return self.__path
-    
-    chemin = property(__getPath)
-    
 @dataclass(frozen=True) # dit que c'est une class qui contient que des attributs qui ne peuvent pas etre modifier
 class UV:
     """
@@ -34,7 +26,8 @@ class TextureManager:
     taille_texture = 128
     __textures_data:list[Image.Image] = []
     __uvs:list[UV] = []
-    
+    __cache = {} # __cache[path] = index in __textures_data
+
     @classmethod
     def __generer_atlas_texture(cls,image:Image.Image) -> int:
         data = image.tobytes()
@@ -62,11 +55,15 @@ class TextureManager:
             path (str): Chemin de l'image
         """
         print(f"Chargement de {path}")
+        if path in cls.__cache:
+            return cls.__cache[path]
         image = Image.open(path).convert("RGBA")
         width, height = image.size
         assert width==cls.taille_texture and height==cls.taille_texture, f"Les images doivents être {cls.taille_texture}x{cls.taille_texture},({width},{height})"
         cls.__textures_data.append(image.copy())
-        return len(cls.__textures_data)-1 # ID
+        id_texture = len(cls.__textures_data)-1
+        cls.__cache[path] = id_texture
+        return id_texture
         
     @classmethod
     def generer_texture_atlas(cls): # TODO: créé un rectangle (Rectangle Packing Algorithm)
@@ -98,12 +95,3 @@ class TextureManager:
     @classmethod
     def getUV(cls,index) -> UV:
         return cls.__uvs[index]
-
-
-if __name__ == "__main__":
-    TextureManager.creer("test2.png")
-    TextureManager.creer("test1.png")
-    TextureManager.creer("test1.png")
-    TextureManager.creer("test2.png")
-    
-    id = TextureManager.generer_texture_atlas()

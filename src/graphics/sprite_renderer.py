@@ -1,31 +1,27 @@
-from ctypes import *
 from OpenGL.GL import *
 from src.graphics.shader import Shader
-from src.math.matrices import *
-from src.math.vectors import *
 from src.graphics.sprite import *
-from src.graphics.camera import Camera
 
+# Obligatoire pour envoyer les données car les listes ne sont pas implementer: "Haven't implemented type-inference for lists yet"
+from numpy import array,float32,uint32
 
 class SpriteRenderer:
-    NOMBRE_SPRITE_MAX = 64
+    NOMBRE_SPRITE_MAX = 1024
 
 
     def __init__(self, shader: Shader,capacite:int=1024):
         self.__shader = shader
-        from numpy import array,float32
-        self.__instance_data = array([],dtype=float32)
+        self.__instance_data = []
+        self.__instance_data_np = array(self.__instance_data,dtype=float32)
 
         self.creer_opengl_obj()
         
     def creer_opengl_obj(self):
         taille_float = sizeof(c_float)
 
-        import numpy as np # Obligatoire pour envoyer les données car les listes ne sont pas implementer: "Haven't implemented type-inference for lists yet"
-
-        vertices = np.array([-0.5,-0.5,0.5, -0.5, 0.5, 0.5,-0.5, 0.5],dtype=np.float32)
+        vertices = array([-0.5,-0.5,0.5, -0.5, 0.5, 0.5,-0.5, 0.5],dtype=float32)
         
-        indices = np.array([0,1,2,2,3,0],dtype=np.uint32)
+        indices = array([0,1,2,2,3,0],dtype=uint32)
 
         self.__vao = glGenVertexArrays(1)
         glBindVertexArray(self.__vao)
@@ -44,52 +40,67 @@ class SpriteRenderer:
         # position
         glEnableVertexAttribArray(0)
         #                     index,    taille,type,    doit etre normaliser, stride          , pointer vide
-        glVertexAttribPointer(0        , 2    ,GL_FLOAT,GL_FALSE            ,4*taille_float,ctypes.c_void_p(0))
+        glVertexAttribPointer(0        , 2    ,GL_FLOAT,GL_FALSE            ,2*taille_float,ctypes.c_void_p(0))
 
         # instance vbo
         self.__instanceVBO = glGenBuffers(1)
         glBindBuffer(GL_ARRAY_BUFFER,self.__instanceVBO)
-        uv_size = taille_float*4
-        self.__taille_layout = Mat4.get_gpu_memory_size()+Mat3.get_gpu_memory_size()+uv_size
-        glBufferData(GL_ARRAY_BUFFER,SpriteRenderer.NOMBRE_SPRITE_MAX*self.__taille_layout,self.__instance_data,GL_DYNAMIC_DRAW)
+
+        self.__taille_layout = 2 * taille_float + 2 * taille_float + 1 * taille_float + 4 * taille_float
+
+        glBufferData(GL_ARRAY_BUFFER,SpriteRenderer.NOMBRE_SPRITE_MAX*self.__taille_layout,self.__instance_data_np,GL_DYNAMIC_DRAW)
         decallage = 0
-        # model Matrice
-        for i in range(3):
-            glEnableVertexAttribArray(1+i)
-            glVertexAttribPointer(1+i,3,GL_FLOAT,GL_FALSE,self.__taille_layout,ctypes.c_void_p(i*3*4))
-            glVertexAttribDivisor(1+i,1)
-        decallage += Mat3.get_gpu_memory_size()
+        
+        # iPos
+        glEnableVertexAttribArray(1)
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, self.__taille_layout, ctypes.c_void_p(decallage))
+        glVertexAttribDivisor(1, 1)
+        decallage += 2 * taille_float
 
-        # les 4 vecteurs uv
+        # iScale
+        glEnableVertexAttribArray(2)
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, self.__taille_layout, ctypes.c_void_p(decallage))
+        glVertexAttribDivisor(2, 1)
+        decallage += 2 * taille_float
+
+        # iRot
+        glEnableVertexAttribArray(3)
+        glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, self.__taille_layout, ctypes.c_void_p(decallage))
+        glVertexAttribDivisor(3, 1)
+        decallage += taille_float
+
+        # iUV (vec4)
         glEnableVertexAttribArray(4)
-        glVertexAttribPointer(4,taille_float,GL_FLOAT,GL_FALSE,self.__taille_layout,ctypes.c_void_p(decallage))
-        glVertexAttribDivisor(4,1)
-        decallage += sizeof(ctypes.c_float)
-
-        glEnableVertexAttribArray(5)
-        glVertexAttribPointer(5,taille_float,GL_FLOAT,GL_FALSE,self.__taille_layout,ctypes.c_void_p(decallage))
-        glVertexAttribDivisor(5,1)
-        decallage += sizeof(ctypes.c_float)
-
-        glEnableVertexAttribArray(6)
-        glVertexAttribPointer(6,taille_float,GL_FLOAT,GL_FALSE,self.__taille_layout,ctypes.c_void_p(decallage))
-        glVertexAttribDivisor(6,1)
-        decallage += sizeof(ctypes.c_float)
-
-        glEnableVertexAttribArray(7)
-        glVertexAttribPointer(7,taille_float,GL_FLOAT,GL_FALSE,self.__taille_layout,ctypes.c_void_p(decallage))
-        glVertexAttribDivisor(7,1)
-        decallage += sizeof(ctypes.c_float)
+        glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, self.__taille_layout, ctypes.c_void_p(decallage))
+        glVertexAttribDivisor(4, 1)
 
 
 
     def dessiner(self):
         self.__shader.use()
+
+        glBindBuffer(GL_ARRAY_BUFFER, self.__instanceVBO)
+        glBufferSubData(GL_ARRAY_BUFFER,0,self.__instance_data_np.nbytes,self.__instance_data_np)
+
         glBindVertexArray(self.__vao)
         #                       mode        ,count,type           ,indices,instancecount
-        glDrawElementsInstanced(GL_TRIANGLES,6    ,GL_UNSIGNED_INT,None   ,len(self.__instance_data))
+        glDrawElementsInstanced(GL_TRIANGLES,6    ,GL_UNSIGNED_INT,None   ,len(self.__instance_data_np))
 
-    def envoyer(self,sprite:Sprite):
+    def envoyer(self, sprite: Sprite):
+        if len(self.__instance_data) >= SpriteRenderer.NOMBRE_SPRITE_MAX:
+            print("Trop de sprite doivent etre dessiner")
+            return
         uv = TextureManager.getUV(sprite.texture_id)
-        import numpy as np
-        np.append(self.__instance_data,[Mat3.model(sprite.rotation, sprite.position, sprite.taille).getData(),*[uv[i] for i in range(4)]])
+
+        self.__instance_data.append([
+            sprite.position.x, sprite.position.y,
+            sprite.taille.x, sprite.taille.y,
+            sprite.rotation,
+            uv.u0, uv.v0,
+            uv.u1, uv.v1
+        ])
+        self.__instance_data_np = array(self.__instance_data,dtype=float32)
+
+    def nettoyer(self):
+        self.__instance_data.clear()
+        self.__instance_data_np = array(self.__instance_data,dtype=float32)

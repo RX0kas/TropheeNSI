@@ -1,23 +1,32 @@
 #version 330 core
 
-layout (location = 0) in vec2 position;
-
-layout (location = 1) in mat3 model_matrix;
-layout (location = 4) in float u0;
-layout (location = 5) in float v0;
-layout (location = 6) in float u1;
-layout (location = 7) in float v1;
+layout (location = 0) in vec2 aPos;     // position du triangle de base
+layout (location = 1) in vec2 iPos;     // position de l'instance
+layout (location = 2) in vec2 iScale;
+layout (location = 3) in float iRot;
+layout (location = 4) in vec4 iUV;      // u0 v0 u1 v1
 
 uniform mat4 view_projection_matrix;
 
 out vec2 TexCoords;
 
-void main() {
-    TexCoords = vec2(u0,v0);
+vec2 rotate(vec2 v, float a)
+{
+    float c = cos(a);
+    float s = sin(a);
+    return vec2(
+        c * v.x - s * v.y,
+        s * v.x + c * v.y
+    );
+}
 
-    // coord Model -> coord Monde
-    vec3 world_pos = model_matrix * vec3(position, 1.0);
+void main()
+{
+    vec2 local = aPos * iScale;
+    vec2 coordMonde = rotate(local, iRot) + iPos;
 
-    // deplacement du monde pour simuler une camera
-    gl_Position = view_projection_matrix * vec4(world_pos.xy, 0.0, 1.0);
+    gl_Position = view_projection_matrix * vec4(coordMonde, 0.0, 1.0);
+
+    vec2 uvLocal = aPos + vec2(0.5);
+    TexCoords = mix(iUV.xy, iUV.zw, uvLocal);
 }

@@ -18,9 +18,9 @@ class UV:
         if i==1: return self.v0
         if i==2: return self.u1
         if i==3: return self.v1
-        print(f"UV[{i}] n'est pas autoriser")
-        
-    
+        raise IndexError(f"UV[{i}] n'est pas autoriser")
+
+
 class TextureManager:
     atlas_id = -1
     taille_texture = 128
@@ -54,9 +54,10 @@ class TextureManager:
         Args:
             path (str): Chemin de l'image
         """
-        print(f"Chargement de {path}")
         if path in cls.__cache:
             return cls.__cache[path]
+
+        print(f"Chargement de {path}")
         image = Image.open(path).convert("RGBA")
         width, height = image.size
         assert width==cls.taille_texture and height==cls.taille_texture, f"Les images doivents être {cls.taille_texture}x{cls.taille_texture},({width},{height})"

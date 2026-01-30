@@ -22,7 +22,7 @@ class Main:
         if deck.nb_carte >1:
             self.jeus.append(Jeu(deck.tirer_carte(),deck.tirer_carte()))
 
-    def deffausser(self,cible,deck):
+    def defausser(self, cible, deck):
         cible = cible.sort(reverse=True)
         for ind in cible:
             self.jeus.pop(ind)
@@ -34,7 +34,3 @@ class Main:
             self.jeus[ind].jouer(deck)
             if self.jeus[ind].val !=0:
                 jeu_jouer.append(self.jeus[ind])
-        
-        
-        
-

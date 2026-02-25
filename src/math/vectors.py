@@ -1,3 +1,4 @@
+import math
 from ctypes import sizeof,c_float
 
 
@@ -20,6 +21,9 @@ class Vec2:
     @classmethod
     def get_gpu_memory_size(cls):
         return 2*sizeof(c_float)
+
+    def distance(self,other:"Vec2") -> float:
+        return math.sqrt((self.x-other.x)**2 + (self.y-other.y)**2)
     
 class Vec3:
     def __init__(self, x:float=0, y:float=0,z:float=0):

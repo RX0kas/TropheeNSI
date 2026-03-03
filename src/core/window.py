@@ -15,7 +15,7 @@ def scroll_callback(window, xoffset, yoffset):
     SystemEvenement.envoyer(MouseScrollEvent(xoffset, yoffset))
 
 def mouse_button_callback(window, button, action, mods):
-    SystemEvenement.envoyer(MousePressedEvent(button, action, mods))
+    SystemEvenement.envoyer(MousePressedEvent(button, action, mods,get_cursor_pos(window)))
 
 
 def cursor_pos_callback(window, xpos, ypos):

@@ -15,7 +15,7 @@ from src.graphics.texture import TextureManager
 
 
 class Application:
-    VERSION = "0.0.1"
+    VERSION = "0.1.0"
     __instance = None
 
     def __init__(self):

@@ -14,10 +14,11 @@ class MouseScrollEvent:
 
 @SystemEvenement.enregistrer_event
 class MousePressedEvent:
-    def __init__(self,button, action, mods):
+    def __init__(self,button, action, mods,pos):
         self.button = button
         self.action = action
         self.mods = mods
+        self.pos:tuple[float, float] = pos
 
 @SystemEvenement.enregistrer_event
 class WindowResizeEvent:

@@ -13,7 +13,7 @@ class Jeu:
         affichage = ""
         for carte in self.cartes:
             affichage = affichage + str(carte) + " , "
-        return affichage[:-4]
+        return affichage[:-3]
     
     def c_val(self) -> int:
         val = 0
@@ -51,7 +51,20 @@ class Jeu:
                     self.cartes = []
                     break
                 nb_as -= 1
-                val -= 1
+                self.val -= 10
+
+    def reel(self):
+        val = self.val
+        nb_carte = len(self.cartes)
+        val_cartes = []
+        val_cou_carte = []
+        for carte in  self.cartes:
+            val_cartes.append(carte.val)
+            val_cou_carte.append((carte.val,carte.cou))
+        val_cartes.sort()
+        val_cou_carte.sort(lambda x : x[0])
+        return [val,nb_carte,val_cartes,val_cou_carte]
+
             
         
     

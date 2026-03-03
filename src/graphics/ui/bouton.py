@@ -8,7 +8,7 @@ class Bouton(Drawable):
     def __init__(self,texture_path:str,pos:Vec2=Vec2(0,0),taille:Vec2=Vec2(1,1),rotation:float=0,couleur:Vec3=Vec3(1,1,1)):
         super().__init__(texture_path,pos,taille,rotation,couleur)
         self.__mouse_hover = False
-        self.__callback_fn:Callable[["Bouton"],None] = []
+        self.__callback_fn:Callable[["Bouton"],None] = [] # type: ignore
 
     @SystemEvenement.ecouter_class_func("MouseMovedEvent")
     def on_mouse_move(self, event: MouseMovedEvent):
@@ -40,7 +40,7 @@ class Bouton(Drawable):
     @SystemEvenement.ecouter_class_func("MousePressedEvent")
     def on_mouse_pressed(self, event: MousePressedEvent):
         if self.__mouse_hover and event.action == glfw.PRESS and event.button == glfw.MOUSE_BUTTON_1:
-            for callback in self.__callback_fn:
+            for callback in self.__callback_fn: # type: ignore
                 callback(self)
 
     def ajouter_callback(self,fn:Callable[["Bouton"],None]):

@@ -1,3 +1,4 @@
+from ctypes import sizeof,c_float
 from math import cos,sin
 
 from src.math.vectors import Vec2
@@ -5,7 +6,7 @@ from src.math.vectors import Vec2
 
 class Mat4:
     size = 4 # present car j'ai copier coller Mat4 pour faire les autres
-
+    
     def __init__(self, data=None):
         taille = self.size**2
         if data is None:
@@ -14,6 +15,10 @@ class Mat4:
             if len(data) != taille:
                 raise ValueError(f"Mat{self.size} doit etre exactement de {taille} valeurs")
             self._data = list(data)
+
+    @classmethod
+    def get_gpu_memory_size(cls):
+        return (cls.size**2)*sizeof(c_float)
 
     @classmethod
     def __pos_to_index(cls,x, y):

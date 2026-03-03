@@ -4,38 +4,38 @@ import random
 class Deck:
 
     def __init__(self) -> "Deck":
-        self.__contenue : list[Carte] = []
+        self.__contenu : list[Carte] = []
 
-    def __get_contenue(self) -> list[Carte]:
-        return self.__contenue
+    def __get_contenu(self) -> list[Carte]:
+        return self.__contenu
     
-    def __set_contenue(self,contenue : list[Carte]) -> None :
-        self.__contenue = contenue
+    def __set_contenu(self,contenu : list[Carte]) -> None :
+        self.__contenu = contenu
 
-    contenue = property(__get_contenue,__set_contenue)
+    contenu = property(__get_contenu,__set_contenu)
     
     def est_vide(self) -> bool:
         return self.nb_carte == 0
     
     def nb_carte(self) -> int:
-        return len(self.contenue)
+        return len(self.contenu)
     
     def tirer_carte(self) -> Carte|None:
         if self.est_vide():
             return None
-        return self.contenue.pop(0)
+        return self.contenu.pop(0)
     
     def rajouter_carte(self,carte : Carte) -> None:
-        self.contenue.append(carte)
+        self.contenu.append(carte)
 
     def melanger(self) -> None:
-        cartes = self.contenue
-        self.contenue = []
+        cartes = self.contenu
+        self.contenu = []
         while len(cartes) != 0:
-            self.contenue.append(cartes.pop(random.randint(0,len(cartes)-1)))
+            self.contenu.append(cartes.pop(random.randint(0,len(cartes)-1)))
 
     def reset_52(self) -> None:
-        self.contenue = []
+        self.contenu = []
         for cou in range(1,5):
             for val in range(1,14):
                 self.rajouter_carte(Carte(val,cou))

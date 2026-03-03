@@ -6,6 +6,10 @@ from src.event.windowEvent import *
 def on_resize(window, width, height):
     glViewport(0, 0, width, height)
     SystemEvenement.envoyer(WindowResizeEvent(width, height))
+    i = Window.instance()
+    if i is not None:
+        i.__height = height
+        i.__width = width
 
 def scroll_callback(window, xoffset, yoffset):
     SystemEvenement.envoyer(MouseScrollEvent(xoffset, yoffset))
@@ -15,9 +19,7 @@ def mouse_button_callback(window, button, action, mods):
 
 
 def cursor_pos_callback(window, xpos, ypos):
-    # Fait lagger
     SystemEvenement.envoyer(MouseMovedEvent(xpos, ypos))
-    pass
 
 def key_press_callback(window, key, scancode, action, mods):
     SystemEvenement.envoyer(KeyPressedEvent(key, scancode, action, mods))

@@ -8,7 +8,7 @@ class Joker:
         self.valeur : int|None = None
         self.text : str|None = None
         self.sprite : Sprite|None = None
-        self.place : int = 0 #{0: innesistant, 1:non présent, 2: posséder, 3: shop}
+        self.place : int = 0 #{0: inexistant, 1:non présent, 2: posséder, 3: shop}
     
     def afficher_joker(self):
         pass

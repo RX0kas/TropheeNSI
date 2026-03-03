@@ -4,3 +4,4 @@
 .vscode
 *.ini
 **/__pycache__
+test.png

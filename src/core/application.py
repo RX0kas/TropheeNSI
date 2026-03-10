@@ -8,11 +8,10 @@ from src.core.window import Window
 from src.graphics.camera import Camera
 from src.graphics.shader import Shader
 from src.graphics.sprite_renderer import SpriteRenderer
-from src.graphics.sprite import Sprite
 from src.graphics.ui.bouton import Bouton
 from src.math.vectors import Vec2
 from src.graphics.texture import TextureManager
-
+from src.graphics.text.Text import Characters
 
 class Application:
     VERSION = "0.1.0"
@@ -37,6 +36,7 @@ class Application:
 
         self.__camera = Camera()
         self.__sprite_renderer = SpriteRenderer(self.__main_shader)
+        Characters.loadCharacters()
 
     def run(self):
         self.__fenetre.show()

@@ -89,4 +89,4 @@ class Application:
 
     @classmethod
     def get_instance(cls) -> "Application":
-        return cls.__instance
+        return cls.__instance # type: ignore

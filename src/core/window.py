@@ -43,6 +43,8 @@ class Window:
         window_hint(OPENGL_PROFILE, OPENGL_CORE_PROFILE)
         window_hint(VISIBLE, GL_FALSE)
         window_hint(OPENGL_FORWARD_COMPAT, GL_TRUE)
+        # Anti-Aliasing
+        window_hint(SAMPLES, 4)
 
         self.__window = create_window(width, height, title, None, None)
         self.__height = height
@@ -65,6 +67,8 @@ class Window:
 
         # Configurer la vue initiale
         on_resize(self.__window, width, height)
+        
+        glEnable(GL_MULTISAMPLE)
 
         if Window.__instance is not None:
             raise PermissionError("Window ne peux pas avoir plus d'une instance")

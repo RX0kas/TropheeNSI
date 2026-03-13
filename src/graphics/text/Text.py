@@ -3,6 +3,8 @@ from OpenGL.GL import *
 import freetype
 from numpy import asarray,float32
 
+from src.math.vectors import Vec3
+
 
 class Characters:
     FichierPolice = "OpenSans-Medium.ttf"
@@ -62,7 +64,8 @@ class Characters:
     def render_text(cls,shaderProgram,text,x,y,scale,color):
         face = freetype.Face(cls.FichierPolice)
         face.set_char_size(48*64)
-        glUniform3f(glGetUniformLocation(shaderProgram, "textColor"),color[0]/255,color[1]/255,color[2]/255)
+        shaderProgram.use()
+        shaderProgram.setVec3f("textColor",Vec3(color[0]/255,color[1]/255,color[2]/255))
 
         glActiveTexture(GL_TEXTURE0)
 

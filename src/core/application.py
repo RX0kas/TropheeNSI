@@ -14,7 +14,6 @@ from src.graphics.texture import TextureManager
 from src.graphics.text.Text import Characters
 
 class Application:
-    VERSION = "0.1.0"
     __instance = None
 
     def __init__(self):
@@ -23,7 +22,7 @@ class Application:
         else:
             print("Une Application existe déja")
             exit(1)
-        self.__fenetre = Window(800, 600, "Trophe NSI - " + Application.VERSION)
+        self.__fenetre = Window(800, 600, "Trophe NSI")
         from OpenGL.GL import glGetString, GL_VERSION
         try:
             print("PyOpenGL GL_VERSION:", glGetString(GL_VERSION))
@@ -33,6 +32,7 @@ class Application:
             print("PyOpenGL can't query GL_VERSION yet:", e)
 
         self.__main_shader = Shader(open(os.path.join("shaders","main.vert")).read(),open(os.path.join("shaders","main.frag")).read())
+        self.__text_shader = Shader(open(os.path.join("shaders","text.vert")).read(),open(os.path.join("shaders","text.frag")).read())
 
         self.__camera = Camera()
         self.__sprite_renderer = SpriteRenderer(self.__main_shader)
@@ -72,10 +72,13 @@ class Application:
             # dit quoi afficher
             #for i in images:
             #    self.__sprite_renderer.envoyer(i)
-            self.__sprite_renderer.envoyer(button)
+            #self.__sprite_renderer.envoyer(button)
 
             self.__sprite_renderer.dessiner()
             self.__sprite_renderer.nettoyer()
+
+            Characters.render_text(self.__text_shader,"toto",0,0,10,[0,0,0])
+
             glfw.swap_buffers(self.__fenetre.get_window())
             time += deltaTime
 

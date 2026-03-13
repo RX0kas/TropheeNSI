@@ -1,30 +1,14 @@
 from src.event.windowEvent import *
-from src.graphics.sprite import Sprite
+from src.graphics.ui.drawable import Drawable
 from src.math.vectors import *
 
-class Drawable(Sprite):
-    """
-    Representes les éléments d'interface
-    Séparé de Sprite pour que ce soit plus simple de les gerer
-    """
+class Bouton(Drawable):
     def __init__(self,texture_path:str,pos:Vec2=Vec2(0,0),taille:Vec2=Vec2(1,1),rotation:float=0,couleur:Vec3=Vec3(1,1,1)):
         super().__init__(texture_path,pos,taille,rotation,couleur)
-        SystemEvenement.enregistrer_event_class(self)
+        self.__callback_fn:Callable[["Bouton"],None] = [] # type: ignore
 
     @SystemEvenement.ecouter_class_func("MouseMovedEvent")
-    def on_mouse_move(self,event:MouseMovedEvent):
-        pass
-
-    @SystemEvenement.ecouter_class_func("MouseScrollEvent")
-    def on_mouse_scroll(self, event: MouseScrollEvent):
-        pass
-
-    @SystemEvenement.ecouter_class_func("MousePressedEvent")
-    def on_mouse_pressed(self,event:MousePressedEvent):
-        pass
-
-    @staticmethod
-    def screen_to_pourcentage(x,y):
+    def on_mouse_move(self, event: MouseMovedEvent):
         from src.core.application import Application
         from src.graphics.camera import Camera
         window = Application.get_instance().get_window()
@@ -41,6 +25,13 @@ class Drawable(Sprite):
         bottom = -hauteur / 2
         top = hauteur / 2
 
-        newX = left + (x / w) * (right - left)
-        newY = top - (y / h) * (top - bottom)
-        return Vec2(newX,newY)
+        x = left + (event.x / w) * (right - left)
+        y = top - (event.y / h) * (top - bottom)
+
+        if (self.position.x - self.taille.x / 2 < x < self.position.x + self.taille.x / 2 and
+                self.position.y - self.taille.y / 2 < y < self.position.y + self.taille.y / 2):
+            for callback in self.__callback_fn: # type: ignore
+                callback(self)
+            
+    def ajouter_callback(self,fn:Callable[["Bouton"],None]):
+        self.__callback_fn.append(fn)

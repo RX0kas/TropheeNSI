@@ -1,145 +1,93 @@
 from deck import Deck
-from carte import Carte
-from jeu import Jeu
 from main import Main
-
-
-
-import random
 
 class Manche:
 
-    def __init__(self,point_cible : int ,deck : Deck,main : int = 4,defausse : int = 3):
-        self.__cible = point_cible
-        self.__point = 0
+    def __init__(self, point_cible: int, deck: Deck, main=4, defausse=3):
+        self.cible = point_cible
+        self.point = 0
         self.deck = deck
-        self.__deck_deffause = Deck()
-        self.__nb_main = main
-        self.__nb_deffausse = deffausse
+        self.deck_defausse = Deck()
+        self.nb_main = main
+        self.nb_defausse = defausse
         self.main = Main()
 
-    def __get_cible(self) -> int:
-        return self.__cible
-    
-    def __set_cible(self,cible : int) -> None :
-        self.__cible = cible
-
-    def __get_point(self) -> int:
-        return self.__point
-    
-    def __set_point(self,point : int) -> None :
-        self.__point = point
-
-    def __get_deck(self) -> Deck:
-        return self.__deck
-    
-    def __set_deck(self,deck : Deck) -> None :
-        self.__deck = deck
-
-    def __get_deck_defause(self) -> Deck:
-        return self.__deck_deffause
-    
-    def __set_deck_defause(self,deck : Deck) -> None :
-        self.__deck_deffause = deck
-    
-    def __get_nb_main(self) -> int:
-        return self.__nb_main
-    
-    def __set_nb_main(self,main : int) -> None :
-        self.__nb_main = main
-
-    def __get_nb_defausse(self) -> int:
-        return self.__nb_defausse
-    
-    def __set_nb_defausse(self,defausse : int) -> None :
-        self.__nb_defausse = defausse
-
-    cible = property(__get_cible,__set_cible)
-    point = property(__get_point,__set_point)
-    deck = property(__get_deck,__set_deck)
-    deck_deffause = property(__get_deck_deffause,__set_deck_deffause)
-    nb_main = property(__get_nb_main,__set_nb_main)
-    nb_defausse = property(__get_nb_defausse,__set_nb_defausse)
-
     def __str__(self):
-        return f"Vous avez actuellement {self.point} points et devait faire {self.cible} point, pour cela il vous reste {self.nb_main} mains et {self.nb_defausse} défausses"
-    
+        return f"Points {self.point}/{self.cible} | Mains: {self.nb_main} | Défausses: {self.nb_defausse}"
+
     def jouer_manche(self):
-        print(f"Dans cette manche vous avez {self.nb_main} mains et {self.nb_defausse} défausses pour faire {self.cible} points")
         self.deck.melanger()
-        if self.main.remplir_avec(self.deck) in ["perdu"]:
-            self.manque_carte()
-        print(self.main)
-        for _ in range(self.nb_main+self.nb_deffausse+3):
-            decision_j_d = self.decision_j_d()
-            while self.nb_deffausse==0 and decision_j_d != "j":
-                decision_j_d = self.decision_j_d()
-            cible = self.decision_cible(len(self.main.jeus))
-            if decision_j_d == "d":
-                self.deffausser(True,cible)
-            elif decision_j_d == "j":
-                self.jouer(cible)
-    
-    def dead(self) -> None:
-        del self
+        if self.main.remplir_avec(self.deck) == "perdu":
+            print("Pas assez de cartes")
+            return
+
+        while self.nb_main > 0:
+
+            print("\nJeux disponibles :")
+            print(self.main)
+
+            print(f"Mains restantes : {self.nb_main} | Défausses restantes : {self.nb_defausse}")
+
+            decision = self.decision_j_d()
+            cible = self.decision_cible(len(self.main.jeux))
+
+            if decision == "d":
+                if self.nb_defausse <= 0:
+                    print("Vous n'avez plus de défausses disponibles, vous devez jouer.")
+                    decision = "j"
+
+            if decision == "d":
+                self.nb_defausse -= 1
+                if self.main.defausser(cible, self.deck, self.deck_defausse) == "perdu":
+                    print("Plus de cartes pour défausser")
+                    return
+            else:
+                self.nb_main -= 1
+                points = self.main.jouer(cible, self.deck)
+                self.point += points
+                print(f"Score total: {self.point}")
+
+                self.main.defausser(cible, self.deck, self.deck_defausse)
+
+                if self.point >= self.cible:
+                    print("Victoire !")
+                    return
+
+            if self.main.remplir_avec(self.deck) == "perdu":
+                print("Plus assez de cartes pour compléter la main, vous jouez avec ce qu'il reste.")
+
+        print("Plus de mains, manche perdue")
 
     @staticmethod
     def decision_j_d():
         dec = ""
         while dec not in ["j","d"]:
-            dec = input("j ou d")
+            dec = input("jouer (j) ou défausser (d) ? ")
         return dec
-    
+
     @staticmethod
     def decision_cible(nb_jeu):
         dec = []
-        while len(dec)<1:
-            nvll_cible = input("nvll_cible")
-            if nvll_cible in [str(x) for x in range(1,nb_jeu+1)]:
-                dec.append(int(nvll_cible)-1)
-        while len(dec)<3:
-            nvll_cible = input("nvll_cible ou s :stop")
-            if nvll_cible in [str(x) for x in range(1,nb_jeu+1)] and nvll_cible not in dec:
-                dec.append(int(nvll_cible)-1)
-            if nvll_cible == "s":
+        while len(dec) == 0:
+            nv = input("Choisir un jeu : ")
+            if nv.isdigit() and 1 <= int(nv) <= nb_jeu:
+                dec.append(int(nv)-1)
+        while len(dec) < 3:
+            nv = input("Autre jeu ou s pour stop : ")
+            if nv == "s":
                 return dec
+            if nv.isdigit():
+                ind = int(nv)-1
+                if 0 <= ind < nb_jeu and ind not in dec:
+                    dec.append(ind)
         return dec
     
-    def deffausser(self,reel_d,cible):
-        if reel_d == True:
-            self.nb_deffausse -= 1
-        if self.main.deffausser(cible,self.deck,self.deck_deffause) in ["perdu"]:
-            self.manque_carte()
 
-    def jouer(self,cible):
-        self.nb_main -= 1
-        point = self.main.jouer(cible)
-        self.point += point
-        if self.point >= self.cible:
-            self.gagner()
-        print(f"Vous êtes à {self.point} points au total")
-        if self.deffausser(False,cible,self.deck,self.deck_deffause) in ["perdu"]:
-            self.manque_carte()
-        if self.nb_main == 0:
-            self.manque_main()
-
-    def manque_carte(self):
-        print("Vous avez perdu comme vous n'avez plus de carte")
-        self.dead
-
-    def manque_main(self):
-        print("Vous avez perdu comme vous n'avez plus de mains")
-        self.dead
-
-
-    def gagner(self):
-        print(f"Vous avez un total de {self.point} points et avez donc atteint les {self.cible} points, bravo pour votre victoire!")
-        self.dead
     
-
-        
-
 if __name__ == "__main__":
     mon_deck = Deck()
     mon_deck.reset_52()
-    Manche(100,mon_deck).jouer_manche()
+
+    manche = Manche(point_cible=500, deck=mon_deck, main=4, defausse=3)
+
+    manche.jouer_manche()

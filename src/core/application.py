@@ -1,8 +1,6 @@
 import os
-from math import sin
 import glfw
 from OpenGL.GL import *
-from PIL import Image
 
 from src.core.window import Window
 from src.graphics.camera import Camera
@@ -12,6 +10,7 @@ from src.graphics.ui.bouton import Bouton
 from src.math.vectors import Vec2
 from src.graphics.texture import TextureManager
 from src.graphics.text.Text import Characters
+from src.graphics.ui.ui_manager import UIManager
 
 class Application:
     __instance = None
@@ -76,8 +75,12 @@ class Application:
 
             self.__sprite_renderer.dessiner()
             self.__sprite_renderer.nettoyer()
-
-            Characters.render_text(self.__text_shader,"toto",0,0,10,[0,0,0])
+            
+            
+            self.__text_shader.setMat4f("projection", self.__camera.get_view_projection_matrix())
+            
+            
+            UIManager.draw_cards()
 
             glfw.swap_buffers(self.__fenetre.get_window())
             time += deltaTime
@@ -89,6 +92,9 @@ class Application:
 
     def get_window(self):
         return self.__fenetre
+    
+    def get_camera(self):
+        return self.__camera
 
     @classmethod
     def get_instance(cls) -> "Application":

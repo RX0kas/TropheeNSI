@@ -60,35 +60,51 @@ class TextureManager:
         print(f"Chargement de {path}")
         image = Image.open(path).convert("RGBA")
         width, height = image.size
-        assert width==cls.taille_texture and height==cls.taille_texture, f"Les images doivents être {cls.taille_texture}x{cls.taille_texture},({width},{height})"
         cls.__textures_data.append(image.copy())
         id_texture = len(cls.__textures_data)-1
         cls.__cache[path] = id_texture
         return id_texture
+    
+    @classmethod
+    def __calculer_taille_atlas(cls) -> int:
+        aire_totale = sum(img.width*img.height for img in cls.__textures_data)
+        taille = ceil(sqrt(aire_totale)*1.2)
+        puissance = 1
+        while puissance < taille:
+            puissance *= 2
+        return puissance
         
     @classmethod
-    def generer_texture_atlas(cls): # TODO: créé un rectangle (Rectangle Packing Algorithm)
+    def generer_texture_atlas(cls):
         """
         Créé une grande texture carré qui contient toutes les autres
         """
         n = len(cls.__textures_data)
-        taille_coter = ceil(sqrt(n))
-        cls.taille_atlas = taille_coter*TextureManager.taille_texture
-        print(f"Creation de l'atlas pour {n} images, carré de {taille_coter} textures de coté et {cls.taille_atlas} pixels")
-        atlas = Image.new("RGBA",(cls.taille_atlas,cls.taille_atlas),(0,0,0,0))
-        for i,img in enumerate(cls.__textures_data):
-            x = (i%taille_coter)*cls.taille_texture
-            y = (i//taille_coter)*cls.taille_texture
-            atlas.paste(img,(x,y))
-            u0 = x/cls.taille_atlas
-            v0 = y/cls.taille_atlas
-            u1 = (x+cls.taille_texture)/cls.taille_atlas
-            v1 = (y+cls.taille_texture)/cls.taille_atlas
+        taille_atlas = cls.__calculer_taille_atlas()
+        print(f"Creation de l'atlas pour {n} images, {taille_atlas}x{taille_atlas} pixels")
+        atlas = Image.new("RGBA",(taille_atlas,taille_atlas),(0,0,0,0))
+        curseur_x = 0
+        curseur_y = 0
+        hauteur_etagere = 0
+        for img in cls.__textures_data:
+            w, h = img.size
+            if curseur_x + w >taille_atlas:
+                curseur_x = 0
+                curseur_y += hauteur_etagere
+                hauteur_etagere = 0
+            
+            atlas.paste(img,(curseur_x,curseur_y))
+            
+            u0 = curseur_x / taille_atlas
+            v0 = curseur_y / taille_atlas
+            u1 = (curseur_x + w)/ taille_atlas
+            v1 = (curseur_y + h)/ taille_atlas
             cls.__uvs.append(UV(u0,v0,u1,v1))
+            curseur_x += w
+            hauteur_etagere = max(hauteur_etagere,h)
             
         
         atlas.save("test.png",format="PNG")
-        
         cls.atlas_id = cls.__generer_atlas_texture(atlas)
     
     

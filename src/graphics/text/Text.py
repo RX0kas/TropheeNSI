@@ -4,6 +4,7 @@ import freetype
 from numpy import asarray,float32
 
 from src.math.vectors import Vec3
+from src.math.matrices import Mat4
 
 
 class Characters:
@@ -30,6 +31,8 @@ class Characters:
         
         face = freetype.Face(cls.FichierPolice)
         face.set_char_size(48*64)
+        
+        glPixelStorei(GL_UNPACK_ALIGNMENT,1)
         
         for i in range(0,128):
             face.load_char(chr(i))
@@ -59,13 +62,25 @@ class Characters:
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, None)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
+        cls.__loaded = True
+        
+    @staticmethod
+    def __ortho(left,right,bottom,top) -> Mat4:
+        m =  Mat4()
+        m[0,0] = 2/(right-left)
+        m[1,1] = 2/(top-bottom)
+        m[0,2] = -(right+left)/(right-left)
+        m[1,2] = -(top+bottom)/(top-bottom)
+        m[3,3] = 1
+        return m
 
     @classmethod
     def render_text(cls,shaderProgram,text,x,y,scale,color):
-        face = freetype.Face(cls.FichierPolice)
-        face.set_char_size(48*64)
+        from src.core.application import Application
         shaderProgram.use()
         shaderProgram.setVec3f("textColor",Vec3(color[0]/255,color[1]/255,color[2]/255))
+        shaderProgram.setInt("text",0)
+        shaderProgram.setMat4f("projection", cls.__ortho(0,Application.get_instance().get_window().get_width(),Application.get_instance().get_window().get_height(),0))
 
         glActiveTexture(GL_TEXTURE0)
 
@@ -79,7 +94,11 @@ class Characters:
             w, h = ch.textureSize
             w = w*scale
             h = h*scale
-            vertices = cls.__get_rendering_buffer(x,y,w,h)
+            
+            xpos = x + ch.bearing[0] * scale
+            ypos = y - (h - ch.bearing[1] * scale)
+            
+            vertices = cls.__get_rendering_buffer(xpos,ypos,w,h)
 
             # On le dessine
             glBindTexture(GL_TEXTURE_2D, ch.texture)
@@ -90,4 +109,4 @@ class Characters:
             glDrawArrays(GL_TRIANGLES, 0, 6)
             
             # On avance le curseur
-            x += (ch.advance>>6)*scale
+            x += (ch.advance >> 6) * scale

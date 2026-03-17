@@ -3,7 +3,7 @@ from main import Main
 
 class Manche:
 
-    def __init__(self, point_cible: int, deck: Deck, main=4, defausse=3):
+    def __init__(self, point_cible: float, deck: Deck, main=4, defausse=3):
         self.cible = point_cible
         self.point = 0
         self.deck = deck
@@ -19,7 +19,7 @@ class Manche:
         self.deck.melanger()
         if self.main.remplir_avec(self.deck) == "perdu":
             print("Pas assez de cartes")
-            return
+            return False
 
         while self.nb_main > 0:
 
@@ -40,7 +40,7 @@ class Manche:
                 self.nb_defausse -= 1
                 if self.main.defausser(cible, self.deck, self.deck_defausse) == "perdu":
                     print("Plus de cartes pour défausser")
-                    return
+                    return False
             else:
                 self.nb_main -= 1
                 points = self.main.jouer(cible, self.deck)
@@ -51,12 +51,13 @@ class Manche:
 
                 if self.point >= self.cible:
                     print("Victoire !")
-                    return
+                    return True
 
             if self.main.remplir_avec(self.deck) == "perdu":
                 print("Plus assez de cartes pour compléter la main, vous jouez avec ce qu'il reste.")
 
         print("Plus de mains, manche perdue")
+        return False
 
     @staticmethod
     def decision_j_d():
@@ -87,7 +88,18 @@ class Manche:
 if __name__ == "__main__":
     mon_deck = Deck()
     mon_deck.reset_52()
-
-    manche = Manche(point_cible=500, deck=mon_deck, main=4, defausse=3)
-
-    manche.jouer_manche()
+    cib = 100
+    cycle = 0
+    manche = Manche(point_cible=cib, deck=mon_deck, main=4, defausse=3)
+    while manche.jouer_manche():
+        if cycle == 0:
+            cib = 2.5*cib
+            cycle =1
+        elif cycle == 1:
+            cib = 2*cib
+            cycle = 2
+        elif cycle == 2:
+            cib = 2*cib
+            cycle = 0
+        mon_deck.reset_52()
+        manche = Manche(point_cible=cib, deck=mon_deck, main=4, defausse=3)

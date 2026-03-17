@@ -11,6 +11,7 @@ from src.math.vectors import Vec2
 from src.graphics.texture import TextureManager
 from src.graphics.text.Text import Characters
 from src.graphics.ui.ui_manager import UIManager
+from src.game.gameManager import GameManager
 
 class Application:
     __instance = None
@@ -36,23 +37,16 @@ class Application:
         self.__camera = Camera()
         self.__sprite_renderer = SpriteRenderer(self.__main_shader)
         Characters.loadCharacters()
+        UIManager.load_cards()
+        
+        self.__game_manager = GameManager()
 
     def run(self):
         self.__fenetre.show()
-
         lastFrame = 0.0
-
-        #images = [Sprite("cat2.png" if x%2==0 else "cat.png",pos=Vec2(x*15,y*15),taille=Vec2(10,10),rotation=x+y) for x in range(-10,10) for y in range(-10,10)]
         time = 0
-
-        button = Bouton("cat.png",pos=Vec2(0,0),taille=Vec2(20,20))
-
-        def exempleCallback(button:Bouton):
-            print("Button pressed")
-
-        button.ajouter_callback(exempleCallback)
-
-
+    
+        self.__game_manager.setup()
         TextureManager.generer_texture_atlas()
         while not self.__fenetre.devrait_fermer():
             # preparation
@@ -68,10 +62,6 @@ class Application:
             glActiveTexture(GL_TEXTURE0)
             glBindTexture(GL_TEXTURE_2D, TextureManager.atlas_id)
             self.__main_shader.setInt("uTexture", 0)
-            # dit quoi afficher
-            #for i in images:
-            #    self.__sprite_renderer.envoyer(i)
-            #self.__sprite_renderer.envoyer(button)
 
             self.__sprite_renderer.dessiner()
             self.__sprite_renderer.nettoyer()
@@ -82,6 +72,9 @@ class Application:
             
             UIManager.draw_cards()
 
+
+            self.__sprite_renderer.dessiner()
+            self.__sprite_renderer.nettoyer()
             glfw.swap_buffers(self.__fenetre.get_window())
             time += deltaTime
 
@@ -95,6 +88,12 @@ class Application:
     
     def get_camera(self):
         return self.__camera
+    
+    def get_sprite_renderer(self):
+        return self.__sprite_renderer
+    
+    def get_game_manager(self):
+        return self.__game_manager
 
     @classmethod
     def get_instance(cls) -> "Application":

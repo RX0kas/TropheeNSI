@@ -21,7 +21,7 @@ vec2 rotate(vec2 v, float a) {
 
 void main() {
     vec2 local = aPos * iScale;
-    vec2 coordMonde = rotate(local, ((iRot+180) * 0.01745329)) + iPos; // 0.01745329=>PI/180
+    vec2 coordMonde = rotate(local, iRot) + iPos;
     gl_Position = view_projection_matrix * vec4(coordMonde, 0.0, 1.0);
 
     vec2 uvLocal = aPos + vec2(0.5);

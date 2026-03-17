@@ -30,6 +30,8 @@ class TextureManager:
 
     @classmethod
     def __generer_atlas_texture(cls,image:Image.Image) -> int:
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         data = image.tobytes()
         largeur, hauteur = image.size
         texture_id = glGenTextures(1)

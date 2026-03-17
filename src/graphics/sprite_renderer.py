@@ -96,8 +96,8 @@ class SpriteRenderer:
             sprite.position.x, sprite.position.y,
             sprite.taille.x, sprite.taille.y,
             sprite.rotation,
-            uv.u0, uv.v0,
-            uv.u1, uv.v1
+            uv.u0, uv.v1,
+            uv.u1, uv.v0
         ])
         self.__instance_data_np = array(self.__instance_data,dtype=float32)
 

@@ -9,6 +9,8 @@ class Jeu:
     def __init__(self, c1: Carte, c2: Carte):
         self.cartes = [c1, c2]
         self.val = self.c_val()
+        if self.val == 22:
+            self.val = 12
 
     def __str__(self):
         return " , ".join(str(c) for c in self.cartes)

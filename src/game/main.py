@@ -64,18 +64,18 @@ class Main:
 
         if n == 3 and 3 in counter_complet.values():
             return "p triple"
-        elif n == 3 and 3 in counter_val.values():
-            return "u triple"
-        elif n == 3 and 3 in counter_score.values():
-            return "s triple"
-        elif n == 3 and 3 in counter_valeur.values():
-            return "triple"
         elif 2 in counter_complet.values():
             return "p double"
+        elif n == 3 and 3 in counter_val.values():
+            return "u triple"
         elif 2 in counter_val.values():
             return "u double"
+        elif n == 3 and 3 in counter_score.values():
+            return "s triple"
         elif 2 in counter_score.values():
             return "s double"
+        elif n == 3 and 3 in counter_valeur.values():
+            return "triple"
         elif 2 in counter_valeur.values():
             return "double"
         else:

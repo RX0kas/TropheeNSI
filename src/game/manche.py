@@ -89,18 +89,10 @@ class Manche:
 if __name__ == "__main__":
     mon_deck = Deck()
     mon_deck.reset_52()
-    cib = 100
-    cycle = 0
+    n_m = 1
+    cib = (0.5*((n_m-1)**2)+(n_m-1) +1)*10**((n_m-1)//3)
     manche = Manche(point_cible=cib, deck=mon_deck, main=4, defausse=3)
     while manche.jouer_manche():
-        if cycle == 0:
-            cib = 2.5*cib
-            cycle =1
-        elif cycle == 1:
-            cib = 2*cib
-            cycle = 2
-        elif cycle == 2:
-            cib = 2*cib
-            cycle = 0
+        cib = (0.5*((n_m-1)**2)+(n_m-1) +1)*10**((n_m-1)//3)
         mon_deck.reset_52()
         manche = Manche(point_cible=cib, deck=mon_deck, main=4, defausse=3)

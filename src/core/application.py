@@ -13,6 +13,11 @@ from src.graphics.text.Text import Characters
 from src.graphics.ui.ui_manager import UIManager
 from src.game.gameManager import GameManager
 
+#from os.path import join
+#
+#def afficher(button:Bouton,*args,**kargs):
+#    print(f"args: {args},kargs:{kargs}")
+
 class Application:
     __instance = None
 
@@ -48,6 +53,10 @@ class Application:
     
         self.__game_manager.setup()
         TextureManager.generer_texture_atlas()
+
+        #b = Bouton(join("assets","card_spades_Q.png"),taille=Vec2(10,10))
+        #b.ajouter_callback(afficher,(5,52,1),{"a":2}) # type: ignore
+
         while not self.__fenetre.devrait_fermer():
             # preparation
             glfw.poll_events()
@@ -62,6 +71,8 @@ class Application:
             glActiveTexture(GL_TEXTURE0)
             glBindTexture(GL_TEXTURE_2D, TextureManager.atlas_id)
             self.__main_shader.setInt("uTexture", 0)
+
+            #self.__sprite_renderer.envoyer(b)
 
             self.__sprite_renderer.dessiner()
             self.__sprite_renderer.nettoyer()

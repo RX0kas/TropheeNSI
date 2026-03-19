@@ -1,5 +1,5 @@
 import random
-from carte import Carte
+from src.game.carte import Carte
 
 class Deck:
 

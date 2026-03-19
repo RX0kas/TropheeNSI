@@ -1,5 +1,5 @@
-from deck import Deck
-from main import Main
+from src.game.deck import Deck
+from src.game.main import Main
 
 class Manche:
 

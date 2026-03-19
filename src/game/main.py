@@ -1,5 +1,5 @@
-from deck import Deck
-from jeu import Jeu
+from src.game.deck import Deck
+from src.game.jeu import Jeu
 from collections import Counter
 
 class Main:

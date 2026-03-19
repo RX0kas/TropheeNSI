@@ -5,3 +5,4 @@
 *.ini
 **/__pycache__
 test.png
+assets/Thumbs.db

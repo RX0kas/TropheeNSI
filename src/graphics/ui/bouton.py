@@ -5,18 +5,23 @@ from src.graphics.ui.drawable import Drawable
 from src.math.vectors import *
 
 class Bouton(Drawable):
-    def __init__(self,texture_path:str,pos:Vec2=Vec2(0,0),taille:Vec2=Vec2(1,1),rotation:float=0,couleur:Vec3=Vec3(1,1,1)):
+    def __init__(self,texture_path:str,pos:Vec2=Vec2(0,0),taille:Vec2=Vec2(1,1),rotation:float=0,couleur:Vec3=Vec3(1,1,1),enable:bool=True):
         super().__init__(texture_path,pos,taille,rotation,couleur)
         self.__callback_fn:Callable[["Bouton"],None] = [] # type: ignore
+        self.enable = enable
 
     def __is_in(self,coord:Vec2):
         return (self.position.x - self.taille.x / 2 < coord.x < self.position.x + self.taille.x / 2 and self.position.y - self.taille.y / 2 < coord.y < self.position.y + self.taille.y / 2)
 
     @SystemEvenement.ecouter_class_func("MousePressedEvent")
     def on_mouse_pressed(self, event: MousePressedEvent):
-        if self.__is_in(Drawable.screen_to_pourcentage(event.pos[0],event.pos[1])) and event.action == glfw.PRESS and event.button == glfw.MOUSE_BUTTON_1:
+        if self.enable and self.__is_in(Drawable.screen_to_pourcentage(event.pos[0],event.pos[1])) and event.action == glfw.PRESS and event.button == glfw.MOUSE_BUTTON_1:
             for callback in self.__callback_fn: # type: ignore
-                callback(self)
+                callback[0](self,*callback[1],**callback[2])
 
-    def ajouter_callback(self,fn:Callable[["Bouton"],None]):
-        self.__callback_fn.append(fn)
+    def ajouter_callback(self,fn:Callable[["Bouton"],None],args:tuple|None=None,kargs:dict|None=None):
+        if args is None:
+            args = ()
+        if kargs is None:
+            kargs = {}
+        self.__callback_fn.append([fn,args,kargs])

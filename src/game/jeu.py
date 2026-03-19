@@ -1,5 +1,5 @@
-from carte import Carte
-from deck import Deck
+from src.game.carte import Carte
+from src.game.deck import Deck
 
 class Jeu:
 

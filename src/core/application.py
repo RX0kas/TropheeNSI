@@ -9,7 +9,7 @@ from src.graphics.sprite_renderer import SpriteRenderer
 from src.graphics.ui.bouton import Bouton
 from src.math.vectors import Vec2
 from src.graphics.texture import TextureManager
-from src.graphics.text.Text import Characters
+from src.graphics.text.Text import Texte
 from src.graphics.ui.ui_manager import UIManager
 from src.game.gameManager import GameManager
 
@@ -41,7 +41,7 @@ class Application:
 
         self.__camera = Camera()
         self.__sprite_renderer = SpriteRenderer(self.__main_shader)
-        Characters.loadCharacters()
+        Texte.loadCharacters()
         UIManager.load_cards()
         
         self.__game_manager = GameManager()
@@ -67,18 +67,13 @@ class Application:
             glClear(GL_COLOR_BUFFER_BIT)
 
             self.__main_shader.use()
+            self.__main_shader.setFloat("uAspect",self.__fenetre.get_aspect())
             self.__main_shader.setMat4f("view_projection_matrix", self.__camera.get_view_projection_matrix())
             glActiveTexture(GL_TEXTURE0)
             glBindTexture(GL_TEXTURE_2D, TextureManager.atlas_id)
             self.__main_shader.setInt("uTexture", 0)
-
-            #self.__sprite_renderer.envoyer(b)
-
-            self.__sprite_renderer.dessiner()
-            self.__sprite_renderer.nettoyer()
-            
-            
-            self.__text_shader.setMat4f("projection", self.__camera.get_view_projection_matrix())
+            self.__main_shader.setFloat("uAspect",self.__fenetre.get_aspect())
+            self.__text_shader.setMat4f("view_projection_matrix", self.__camera.get_view_projection_matrix())
             
             
             UIManager.draw_cards()

@@ -4,9 +4,12 @@ layout (location = 0) in vec4 vertex; // <vec2 pos, vec2 tex>
 
 out vec2 TexCoords;
 
-uniform mat4 projection;
+uniform float uAspect;
+uniform mat4 view_projection_matrix;
 
 void main() {
-    gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);
+    vec3 p = (view_projection_matrix * vec4(vertex.xy, 0.0, 1.0)).xyz;
+    p.x /= uAspect;
+    gl_Position = vec4(p,1.0);
     TexCoords = vertex.zw;
 }

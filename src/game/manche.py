@@ -10,6 +10,7 @@ class Manche:
         self.deck_defausse = Deck()
         self.nb_main = main
         self.nb_defausse = defausse
+        # carte du bas
         self.main = Main()
 
     def __str__(self):

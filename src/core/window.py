@@ -4,6 +4,7 @@ from src.event.windowEvent import *
 
 # Permets que le system d'evenement soit compatible avec GLFW
 def on_resize(window, width, height):
+    print(f"Resize to {width}x{height}")
     glViewport(0, 0, width, height)
     SystemEvenement.envoyer(WindowResizeEvent(width, height))
     i = Window.instance()
@@ -44,7 +45,8 @@ class Window:
         window_hint(VISIBLE, GL_FALSE)
         window_hint(OPENGL_FORWARD_COMPAT, GL_TRUE)
         # Anti-Aliasing
-        window_hint(SAMPLES, 4)
+        window_hint(SAMPLES, 16)
+        
 
         self.__window = create_window(width, height, title, None, None)
         self.__height = height
@@ -68,6 +70,8 @@ class Window:
         # Configurer la vue initiale
         on_resize(self.__window, width, height)
         
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(GL_MULTISAMPLE)
 
         if Window.__instance is not None:

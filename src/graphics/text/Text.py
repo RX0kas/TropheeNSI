@@ -7,7 +7,7 @@ from src.math.vectors import Vec3
 from src.math.matrices import Mat4
 
 
-class Characters:
+class Texte:
     FichierPolice = "OpenSans-Medium.ttf"
     __chars = dict()
     __loaded = False
@@ -83,9 +83,6 @@ class Characters:
         shaderProgram.setMat4f("projection", cls.__ortho(0,Application.get_instance().get_window().get_width(),Application.get_instance().get_window().get_height(),0))
 
         glActiveTexture(GL_TEXTURE0)
-
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         glBindVertexArray(cls.__VAO)
         # Pour chaque charactere

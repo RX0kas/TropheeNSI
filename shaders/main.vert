@@ -7,6 +7,7 @@ layout (location = 3) in float iRot;
 layout (location = 4) in vec4 iUV;      // u0 v0 u1 v1
 
 uniform mat4 view_projection_matrix;
+uniform float uAspect;
 
 out vec2 TexCoords;
 
@@ -22,7 +23,9 @@ vec2 rotate(vec2 v, float a) {
 void main() {
     vec2 local = aPos * iScale;
     vec2 coordMonde = rotate(local, iRot) + iPos;
-    gl_Position = view_projection_matrix * vec4(coordMonde, 0.0, 1.0);
+    vec3 p = (view_projection_matrix * vec4(coordMonde, 0.0, 1.0)).xyz;
+    p.x /= uAspect;
+    gl_Position = vec4(p,1.0);
 
     vec2 uvLocal = aPos + vec2(0.5);
     TexCoords = mix(iUV.xy, iUV.zw, uvLocal);

@@ -45,4 +45,17 @@ class Camera:
         return view
 
     def get_view_projection_matrix(self) -> Mat4:
-        return self.get_projection_matrix() * self.get_view_matrix()
+        return self.get_projection_matrix() * self.get_view_matrix() # type: ignore
+
+    def world_to_screen(self,worl_pos:Vec2) -> Vec2:
+        from src.core.application import Application
+        window = Application.get_instance().get_window()
+        
+        clip:Vec4 = self.get_view_projection_matrix() * Vec4(worl_pos.x,worl_pos.y,0.0,1.0) # type: ignore
+        ndc_x = clip.x/clip.w
+        ndc_y = clip.y/clip.w
+
+        screen_x = (ndc_x + 1.0)/2.0*window.get_width()
+        screen_y = (1.0 - ndc_y)/2.0*window.get_height()
+        
+        return Vec2(screen_x,screen_y)

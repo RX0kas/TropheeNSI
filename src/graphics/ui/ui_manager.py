@@ -103,9 +103,16 @@ class UIManager:
 
     @classmethod
     def __draw_bouton_selection(cls,idxJeu:int):
+        from src.core.application import Application
         pos = Vec2(-62+30*idxJeu,-40)
         bouton = cls.__boutonSelection[idxJeu]
         bouton.taille = Vec2(20,10)
         bouton.position = pos
         cls.__spriteRendererRef.envoyer(bouton)
-        Texte.render_text("selectionner",pos.x,pos.y,Vec2(20,10),Vec3(1,1,1))
+        screen_pos = Application.get_instance().get_camera().world_to_screen(pos)
+        #Texte.render_text("selectionner",1,1,1,Vec3(1,1,1))
+        
+        def selectionner_bouton_callback(btn:Bouton):
+            print(f"__selectionner_bouton_callback({idxJeu})")
+        
+        bouton.ajouter_callback(selectionner_bouton_callback)

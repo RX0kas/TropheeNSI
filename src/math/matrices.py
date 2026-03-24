@@ -1,7 +1,7 @@
 from ctypes import sizeof,c_float
 from math import cos,sin
 
-from src.math.vectors import Vec2
+from src.math.vectors import Vec2,Vec4
 
 
 class Mat4:
@@ -47,6 +47,14 @@ class Mat4:
         return self.__class__(result) # Parcours la matrice et on ajoute les cases
 
     def __mul__(self, other):
+        if isinstance(other,Vec4):
+            result = Vec4()
+            for i in range(self.size):
+                for k in range(self.size):
+                    result[i] += self[i,k]*other[k]
+                    
+            return result
+            
         result = self.__class__() # on créé une matrice vide
         for i in range(self.size):
             for j in range(self.size):

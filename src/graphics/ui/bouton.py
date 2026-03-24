@@ -19,7 +19,7 @@ class Bouton(Drawable):
             for callback in self.__callback_fn: # type: ignore
                 callback[0](self,*callback[1],**callback[2])
 
-    def ajouter_callback(self,fn:Callable[["Bouton"],None],args:tuple|None=None,kargs:dict|None=None):
+    def ajouter_callback(self,fn:Callable[["Bouton",Any],None],args:tuple|None=None,kargs:dict|None=None):
         if args is None:
             args = ()
         if kargs is None:

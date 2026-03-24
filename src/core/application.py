@@ -71,7 +71,6 @@ class Application:
             glActiveTexture(GL_TEXTURE0)
             glBindTexture(GL_TEXTURE_2D, TextureManager.atlas_id)
             self.__main_shader.setInt("uTexture", 0)
-            self.__main_shader.setFloat("uAspect",self.__fenetre.get_aspect())            
             
             UIManager.draw_cards()
 

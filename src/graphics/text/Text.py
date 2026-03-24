@@ -83,10 +83,15 @@ class Texte:
         assert(cls.__shader is not None)
         from src.core.application import Application
         cls.__shader.use()
-        cls.__shader.setVec3f("textColor",Vec3(color[0]/255,color[1]/255,color[2]/255))
+        cls.__shader.setVec3f("textColor",color)
         cls.__shader.setInt("text",0)
-        cls.__shader.setMat4f("projection", cls.__ortho(0,Application.get_instance().get_window().get_width(),Application.get_instance().get_window().get_height(),0))
+        #cls.__shader.setMat4f("view_projection_matrix", cls.__ortho(0,Application.get_instance().get_window().get_width(),Application.get_instance().get_window().get_height(),0))
+        cls.__shader.setMat4f("view_projection_matrix", Application.get_instance().get_camera().get_view_projection_matrix())
 
+        cls.__shader.setFloat("uAspect",Application.get_instance().get_window().get_aspect())
+        blend_enable = glIsEnabled(GL_BLEND)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glActiveTexture(GL_TEXTURE0)
 
         glBindVertexArray(cls.__VAO)
@@ -124,3 +129,10 @@ class Texte:
                 x += (ch.advance >> 6) * scale
             elif isinstance(scale,Vec2) or isinstance(scale,Vec3):
                 x += (ch.advance >> 6) * scale.x
+        
+        glBindVertexArray(0)
+        glBindTexture(GL_TEXTURE_2D,0)
+        glUseProgram(0)
+        if not blend_enable:
+            glDisable(GL_BLEND)
+        glPixelStorei(GL_UNPACK_ALIGNMENT,4)

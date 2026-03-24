@@ -92,4 +92,4 @@ class Vec4:
     
     @classmethod
     def get_gpu_memory_size(cls):
-        return 3*sizeof(c_float)
+        return 4*sizeof(c_float)

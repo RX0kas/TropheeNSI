@@ -37,7 +37,6 @@ class Application:
             print("PyOpenGL can't query GL_VERSION yet:", e)
 
         self.__main_shader = Shader(open(os.path.join("shaders","main.vert")).read(),open(os.path.join("shaders","main.frag")).read())
-        self.__text_shader = Shader(open(os.path.join("shaders","text.vert")).read(),open(os.path.join("shaders","text.frag")).read())
 
         self.__camera = Camera()
         self.__sprite_renderer = SpriteRenderer(self.__main_shader)
@@ -72,9 +71,7 @@ class Application:
             glActiveTexture(GL_TEXTURE0)
             glBindTexture(GL_TEXTURE_2D, TextureManager.atlas_id)
             self.__main_shader.setInt("uTexture", 0)
-            self.__main_shader.setFloat("uAspect",self.__fenetre.get_aspect())
-            self.__text_shader.setMat4f("view_projection_matrix", self.__camera.get_view_projection_matrix())
-            
+            self.__main_shader.setFloat("uAspect",self.__fenetre.get_aspect())            
             
             UIManager.draw_cards()
 

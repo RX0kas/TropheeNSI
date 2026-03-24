@@ -103,7 +103,9 @@ class UIManager:
 
     @classmethod
     def __draw_bouton_selection(cls,idxJeu:int):
+        pos = Vec2(-62+30*idxJeu,-40)
         bouton = cls.__boutonSelection[idxJeu]
-        bouton.taille = 20
-        bouton.position = Vec2(-60+30*idxJeu,-40)
+        bouton.taille = Vec2(20,10)
+        bouton.position = pos
         cls.__spriteRendererRef.envoyer(bouton)
+        Texte.render_text("selectionner",pos.x,pos.y,Vec2(20,10),Vec3(1,1,1))

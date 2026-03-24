@@ -3,15 +3,18 @@ from OpenGL.GL import *
 import freetype
 from numpy import asarray,float32
 
-from src.math.vectors import Vec3
+from src.math.vectors import *
 from src.math.matrices import Mat4
+from src.graphics.shader import Shader
 
+import os
 
 class Texte:
     FichierPolice = "OpenSans-Medium.ttf"
     __chars = dict()
     __loaded = False
-    
+    __shader:Shader|None = None
+  
     @staticmethod
     def __get_rendering_buffer(xpos, ypos, w, h, zfix=0.0):
         return asarray([
@@ -63,7 +66,8 @@ class Texte:
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindVertexArray(0)
         cls.__loaded = True
-        
+    
+        cls.__shader = Shader(open(os.path.join("shaders","text.vert")).read(),open(os.path.join("shaders","text.frag")).read())
     @staticmethod
     def __ortho(left,right,bottom,top) -> Mat4:
         m =  Mat4()
@@ -75,12 +79,13 @@ class Texte:
         return m
 
     @classmethod
-    def render_text(cls,shaderProgram,text,x,y,scale,color):
+    def render_text(cls,text,x,y,scale:float|int|Vec2|Vec3,color):
+        assert(cls.__shader is not None)
         from src.core.application import Application
-        shaderProgram.use()
-        shaderProgram.setVec3f("textColor",Vec3(color[0]/255,color[1]/255,color[2]/255))
-        shaderProgram.setInt("text",0)
-        shaderProgram.setMat4f("projection", cls.__ortho(0,Application.get_instance().get_window().get_width(),Application.get_instance().get_window().get_height(),0))
+        cls.__shader.use()
+        cls.__shader.setVec3f("textColor",Vec3(color[0]/255,color[1]/255,color[2]/255))
+        cls.__shader.setInt("text",0)
+        cls.__shader.setMat4f("projection", cls.__ortho(0,Application.get_instance().get_window().get_width(),Application.get_instance().get_window().get_height(),0))
 
         glActiveTexture(GL_TEXTURE0)
 
@@ -89,11 +94,20 @@ class Texte:
         for c in text:
             ch = cls.__chars[c]
             w, h = ch.textureSize
-            w = w*scale
-            h = h*scale
+            xpos = 0
+            ypos = 0
+            if isinstance(scale,int) or isinstance(scale,float):
+                w = w*scale
+                h = h*scale
+                xpos = x + ch.bearing[0] * scale
+                ypos = y - (h - ch.bearing[1] * scale)
+            elif isinstance(scale,Vec2) or isinstance(scale,Vec3):
+                w = scale.x
+                h = scale.y
+                xpos = x + ch.bearing[0] * scale.x
+                ypos = y - (h - ch.bearing[1] * scale.y)
             
-            xpos = x + ch.bearing[0] * scale
-            ypos = y - (h - ch.bearing[1] * scale)
+            
             
             vertices = cls.__get_rendering_buffer(xpos,ypos,w,h)
 
@@ -106,4 +120,7 @@ class Texte:
             glDrawArrays(GL_TRIANGLES, 0, 6)
             
             # On avance le curseur
-            x += (ch.advance >> 6) * scale
+            if isinstance(scale,int) or isinstance(scale,float):
+                x += (ch.advance >> 6) * scale
+            elif isinstance(scale,Vec2) or isinstance(scale,Vec3):
+                x += (ch.advance >> 6) * scale.x

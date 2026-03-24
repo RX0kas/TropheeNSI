@@ -59,7 +59,15 @@ class UIManager:
         
 
         for i in range(5):
-            cls.__boutonSelection.append(Bouton(join("assets","background_button.png"),enable=False))
+            btn = Bouton(join("assets","background_button.png"))
+            def make_callback(idx):
+                def callback(btn:Bouton):
+                    print(f"__selectionner_bouton_callback({idx})")
+                return callback
+            btn.ajouter_callback(make_callback(i))
+            cls.__boutonSelection.append(btn)
+            
+            
 
     
 
@@ -111,8 +119,3 @@ class UIManager:
         cls.__spriteRendererRef.envoyer(bouton)
         screen_pos = Application.get_instance().get_camera().world_to_screen(pos)
         #Texte.render_text("selectionner",1,1,1,Vec3(1,1,1))
-        
-        def selectionner_bouton_callback(btn:Bouton):
-            print(f"__selectionner_bouton_callback({idxJeu})")
-        
-        bouton.ajouter_callback(selectionner_bouton_callback)

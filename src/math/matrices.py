@@ -79,11 +79,11 @@ class Mat4:
         
         # Elimination Gauss-Jordan (https://fr.wikipedia.org/wiki/%C3%89limination_de_Gauss-Jordan)
         for col in range(n):
-            max_row = max(range(col,n),key=lambda x: abs([x][col]))
+            max_row = max(range(col,n),key=lambda x: abs(aug[x][col]))
             aug[col],aug[max_row] = aug[max_row], aug[col]
             
             pivot = aug[col][col]
-            assert abs(pivot) > 1e-10,"Matrice non inversible"
+            assert abs(pivot) > 1e-10,"Matrice non inversible: peut faire une division par zero"
             
             aug[col] = [v/pivot for v in aug[col]]
             

@@ -44,3 +44,17 @@ class Drawable(Sprite):
         newX = left + (x / w) * (right - left)
         newY = top - (y / h) * (top - bottom)
         return Vec2(newX,newY)
+
+    @staticmethod
+    def screen_to_world(x,y) -> Vec2:
+        from src.core.application import Application
+        app = Application.get_instance()
+        window = app.get_window()
+        camera = app.get_camera()
+        
+        ndc_x = (x/window.get_width()) * 2.0 - 1.0
+        ndc_y = 1.0 - (y / window.get_height()) * 2.0
+        
+        vp_inv = camera.get_view_projection_matrix().inverse()
+        world = vp_inv * Vec4(ndc_x,ndc_y,0.0,1.0)
+        return Vec2(world.x,world.y)

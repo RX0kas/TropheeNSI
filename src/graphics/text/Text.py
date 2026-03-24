@@ -85,8 +85,8 @@ class Texte:
         cls.__shader.use()
         cls.__shader.setVec3f("textColor",color)
         cls.__shader.setInt("text",0)
-        #cls.__shader.setMat4f("view_projection_matrix", cls.__ortho(0,Application.get_instance().get_window().get_width(),Application.get_instance().get_window().get_height(),0))
-        cls.__shader.setMat4f("view_projection_matrix", Application.get_instance().get_camera().get_view_projection_matrix())
+        cls.__shader.setMat4f("view_projection_matrix", cls.__ortho(0,Application.get_instance().get_window().get_width(),Application.get_instance().get_window().get_height(),0))
+        #cls.__shader.setMat4f("view_projection_matrix", Application.get_instance().get_camera().get_view_projection_matrix())
 
         cls.__shader.setFloat("uAspect",Application.get_instance().get_window().get_aspect())
         blend_enable = glIsEnabled(GL_BLEND)

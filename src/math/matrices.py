@@ -68,6 +68,35 @@ class Mat4:
 
     def getData(self):
         return self._data
+    
+    def inverse(self) -> "Mat4":
+        n = self.size
+        aug = []
+        for i in range(n):
+            row = [self[i,j] for j in range(n)]
+            identity_row = [1.0 if i == j else 0.0 for j in range(n)]
+            aug.append(row + identity_row)
+        
+        # Elimination Gauss-Jordan (https://fr.wikipedia.org/wiki/%C3%89limination_de_Gauss-Jordan)
+        for col in range(n):
+            max_row = max(range(col,n),key=lambda x: abs([x][col]))
+            aug[col],aug[max_row] = aug[max_row], aug[col]
+            
+            pivot = aug[col][col]
+            assert abs(pivot) > 1e-10,"Matrice non inversible"
+            
+            aug[col] = [v/pivot for v in aug[col]]
+            
+            for row in range(n):
+                if row != col:
+                    factor = aug[row][col]
+                    aug[row] = [aug[row][k] - factor * aug[col][k] for k in range(2*n)] # Long, comprend pas, mais fonctionne
+        
+        result = Mat4()
+        for i in range(n):
+            for j in range(n):
+                result[i,j] = aug[i][n+j]
+        return result
 
     @classmethod
     def orthographic(cls,left:float,right:float,bottom:float,top:float):

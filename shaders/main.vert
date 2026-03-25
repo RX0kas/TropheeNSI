@@ -24,7 +24,7 @@ void main() {
     vec2 local = aPos * iScale;
     vec2 coordMonde = rotate(local, iRot) + iPos;
     vec3 p = (view_projection_matrix * vec4(coordMonde, 0.0, 1.0)).xyz;
-    p.x /= uAspect;
+    //p.x /= uAspect;
     gl_Position = vec4(p,1.0);
 
     vec2 uvLocal = aPos + vec2(0.5);

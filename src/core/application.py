@@ -3,6 +3,7 @@ import glfw
 from OpenGL.GL import *
 
 from src.core.window import Window
+from src.debug.debug_box import DebugDraw
 from src.graphics.camera import Camera
 from src.graphics.shader import Shader
 from src.graphics.sprite_renderer import SpriteRenderer
@@ -52,6 +53,7 @@ class Application:
     
         self.__game_manager.setup()
         TextureManager.generer_texture_atlas()
+        DebugDraw.load()
 
         #b = Bouton(join("assets","card_spades_Q.png"),taille=Vec2(10,10))
         #b.ajouter_callback(afficher,(5,52,1),{"a":2}) # type: ignore
@@ -77,6 +79,8 @@ class Application:
 
             self.__sprite_renderer.dessiner()
             self.__sprite_renderer.nettoyer()
+
+            Bouton.draw_debug()
             glfw.swap_buffers(self.__fenetre.get_window())
             time += deltaTime
 

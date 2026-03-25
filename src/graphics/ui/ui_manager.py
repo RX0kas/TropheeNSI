@@ -1,9 +1,8 @@
 from math import radians
-from src.graphics.texture import TextureManager
+
 from src.graphics.sprite import Sprite
 from src.graphics.sprite_renderer import SpriteRenderer
 from src.graphics.ui.bouton import Bouton
-from src.graphics.text.Text import Texte
 from src.game.gameManager import GameManager
 from src.game.carte import Carte
 from os.path import join
@@ -76,10 +75,10 @@ class UIManager:
         sprite.taille = 20
         if idxCarte:
             sprite.rotation = radians(-15)
-            sprite.position = Vec2(-60+30*idxJeu,-20)
+            sprite.position = Vec2(-47+25*idxJeu,-20)
         elif idxCarte==0:
             sprite.rotation = radians(15)
-            sprite.position = Vec2(-67+30*idxJeu,-20)
+            sprite.position = Vec2(-54+25*idxJeu,-20)
         
     
     @classmethod
@@ -112,9 +111,9 @@ class UIManager:
     @classmethod
     def __draw_bouton_selection(cls,idxJeu:int):
         from src.core.application import Application
-        pos = Vec2(-62+30*idxJeu,-40)
+        pos = Vec2(-50+25*idxJeu,-40)
         bouton = cls.__boutonSelection[idxJeu]
-        bouton.taille = Vec2(20,10)
+        bouton.taille = Vec2(16,8)
         bouton.position = pos
         cls.__spriteRendererRef.envoyer(bouton)
         screen_pos = Application.get_instance().get_camera().world_to_screen(pos)

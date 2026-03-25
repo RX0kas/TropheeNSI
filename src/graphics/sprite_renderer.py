@@ -74,17 +74,17 @@ class SpriteRenderer:
         glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, self.__taille_layout, ctypes.c_void_p(decallage))
         glVertexAttribDivisor(4, 1)
 
-
-
     def dessiner(self):
+        if len(self.__instance_data) == 0:
+            return
+
         self.__shader.use()
-
         glBindBuffer(GL_ARRAY_BUFFER, self.__instanceVBO)
-        glBufferSubData(GL_ARRAY_BUFFER,0,self.__instance_data_np.nbytes,self.__instance_data_np)
-
+        glBufferSubData(GL_ARRAY_BUFFER, 0, self.__instance_data_np.nbytes, self.__instance_data_np)
         glBindVertexArray(self.__vao)
-        #                       mode        ,count,type           ,indices,instancecount
-        glDrawElementsInstanced(GL_TRIANGLES,6    ,GL_UNSIGNED_INT,None   ,len(self.__instance_data_np))
+
+        nombre_sprites = len(self.__instance_data)
+        glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None, nombre_sprites)
 
     def envoyer(self, sprite: Sprite):
         if len(self.__instance_data) >= SpriteRenderer.NOMBRE_SPRITE_MAX:

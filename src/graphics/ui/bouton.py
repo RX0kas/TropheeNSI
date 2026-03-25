@@ -3,16 +3,27 @@ import glfw
 from src.event.windowEvent import *
 from src.graphics.ui.drawable import Drawable
 from src.math.vectors import *
+from src.debug.debug_box import DebugDraw
 
 class Bouton(Drawable):
+    debug_box_activer = False
+    __boutons:list["Bouton"] = []
+
+    @classmethod
+    def draw_debug(cls):
+        if cls.debug_box_activer:
+            for btn in cls.__boutons:
+                DebugDraw.draw_rect(btn.position, btn.taille)
+
     def __init__(self,texture_path:str,pos:Vec2=Vec2(0,0),taille:Vec2=Vec2(1,1),rotation:float=0,couleur:Vec3=Vec3(1,1,1),enable:bool=True):
         super().__init__(texture_path,pos,taille,rotation,couleur)
         self.__callback_fn:Callable[["Bouton"],None] = [] # type: ignore
         self.enable = enable
         self.__clicked = False
+        Bouton.__boutons.append(self)
 
     def __is_in(self,coord:Vec2):
-        return (self.position.x - self.taille.x / 2 < coord.x < self.position.x + self.taille.x / 2 and self.position.y - self.taille.y / 2 < coord.y < self.position.y + self.taille.y / 2)
+        return self.position.x - self.taille.x / 2 < coord.x < self.position.x + self.taille.x / 2 and self.position.y - self.taille.y / 2 < coord.y < self.position.y + self.taille.y / 2
 
     @SystemEvenement.ecouter_class_func("MousePressedEvent")
     def on_mouse_pressed(self, event: MousePressedEvent):

@@ -79,12 +79,20 @@ class SpriteRenderer:
             return
 
         self.__shader.use()
+
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, TextureManager.atlas_id)
+        self.__shader.setInt("uTexture", 0)
         glBindBuffer(GL_ARRAY_BUFFER, self.__instanceVBO)
         glBufferSubData(GL_ARRAY_BUFFER, 0, self.__instance_data_np.nbytes, self.__instance_data_np)
-        glBindVertexArray(self.__vao)
 
+        glBindVertexArray(self.__vao)
         nombre_sprites = len(self.__instance_data)
         glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None, nombre_sprites)
+
+        # Nettoyage
+        glBindVertexArray(0)
+        glUseProgram(0)
 
     def envoyer(self, sprite: Sprite):
         if len(self.__instance_data) >= SpriteRenderer.NOMBRE_SPRITE_MAX:

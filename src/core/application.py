@@ -64,17 +64,21 @@ class Application:
             currentFrame = self.__fenetre.get_time()
             deltaTime = currentFrame - lastFrame
             lastFrame = currentFrame
+
+            # Updating
+            self.__game_manager.update()
+
+            # Rendering
             glClearColor(0.8, 0.8, 0.8, 1.0)
             glClear(GL_COLOR_BUFFER_BIT)
 
             self.__main_shader.use()
-            self.__main_shader.setFloat("uAspect",self.__fenetre.get_aspect())
             self.__main_shader.setMat4f("view_projection_matrix", self.__camera.get_view_projection_matrix())
             glActiveTexture(GL_TEXTURE0)
             glBindTexture(GL_TEXTURE_2D, TextureManager.atlas_id)
             self.__main_shader.setInt("uTexture", 0)
             
-            UIManager.draw_cards()
+            UIManager.draw_ui()
 
 
             self.__sprite_renderer.dessiner()

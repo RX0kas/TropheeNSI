@@ -79,16 +79,17 @@ class Texte:
         return m
 
     @classmethod
-    def render_text(cls,text,x,y,scale:float|int|Vec2|Vec3,color):
-        assert(cls.__shader is not None)
+    def render_text(cls,text:str,x:int,y:int,scale:float|int|Vec2|Vec3,color:Vec3):
+        y = -y
         from src.core.application import Application
-        cls.__shader.use()
-        cls.__shader.setVec3f("textColor",color)
-        cls.__shader.setInt("text",0)
-        cls.__shader.setMat4f("view_projection_matrix", cls.__ortho(0,Application.get_instance().get_window().get_width(),Application.get_instance().get_window().get_height(),0))
-        #cls.__shader.setMat4f("view_projection_matrix", Application.get_instance().get_camera().get_view_projection_matrix())
+        window = Application.get_instance().get_window()
+        w, h = window.get_width(), window.get_height()
 
-        cls.__shader.setFloat("uAspect",Application.get_instance().get_window().get_aspect())
+        cls.__shader.use()
+        cls.__shader.setVec3f("textColor", color)
+        cls.__shader.setInt("text", 0)
+        cls.__shader.setMat4f("view_projection_matrix", cls.__ortho(0, w, h, 0))
+
         blend_enable = glIsEnabled(GL_BLEND)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)

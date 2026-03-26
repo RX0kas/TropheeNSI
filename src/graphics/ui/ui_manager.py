@@ -145,9 +145,11 @@ class UIManager:
     @classmethod
     def setupSprite(cls, sprite: Sprite, idxJeu: int, idxCarte: int):
         offset = 0
+        pos = Vec2(-54 + 25 * idxJeu, -20)
         if idxJeu in cls.__gameManagerRef.jeu_cibles:
             if idxJeu == cls.__gameManagerRef.manche.main.jeu_en_cours:
-                offset = 10
+                offset = 0
+                pos = Vec2(-15, 15)
             else:
                 offset = 5
 
@@ -155,14 +157,14 @@ class UIManager:
 
         if idxCarte == 0:
             sprite.rotation = radians(15)
-            sprite.position = Vec2(-54 + 25 * idxJeu, -20)
+            sprite.position = pos
         elif idxCarte == 1:
             sprite.rotation = radians(-15)
-            sprite.position = Vec2(-47 + 25 * idxJeu, -20)
+            sprite.position = Vec2(pos.x+7,pos.y)
         else:
-            extra = idxCarte - 1  # 1, 2, 3 …
+            extra = idxCarte - 1
             sprite.rotation = radians(0)
-            sprite.position = Vec2(-47 + 25 * idxJeu + extra * 6, -20 - extra * 3)
+            sprite.position = Vec2((pos.x+7)+ extra * 6,pos.y - extra * 3)
 
         sprite.position.y += offset
 

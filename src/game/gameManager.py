@@ -16,7 +16,7 @@ class GameManager:
         self.running = False
         self.btn_pressed = NONE
         self.jeu_cibles = []
-        self.jeu_en_cours = -1
+        self.en_attente_choix = False
     
     # appeler avant d'ouvrir l'application
     def setup(self):
@@ -37,13 +37,13 @@ class GameManager:
 
         if self.en_attente_choix:
             self.__jouer()
+            self.btn_pressed = NONE
         elif len(self.jeu_cibles):
             if self.btn_pressed == JOUER_BTN:
                 self.__jouer()
             elif self.btn_pressed == DEFAUSSE_BTN:
                 self.__defausser()
             self.btn_pressed = NONE
-            self.manche.main.choix = ""
 
     def __jouer(self):
         points = self.manche.main.jouer(self.jeu_cibles, self.deck)
@@ -51,6 +51,8 @@ class GameManager:
         if points == -1:
             self.en_attente_choix = True
             return
+
+        self.en_attente_choix = False
         self.manche.nb_main -= 1
         self.manche.point += points
 

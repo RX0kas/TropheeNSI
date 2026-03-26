@@ -16,18 +16,14 @@ class UIJeu(Jeu):
         nb_as = sum(1 for c in self.cartes if c.val == 1)
 
         if deck.est_vide():
-            print("Plus de cartes dans le deck")
-
             Application.get_instance().get_game_manager().perdu()
             return False
 
         if choix == "s":
-            print("jeu validé")
             return True
 
         nvll_carte = deck.tirer_carte()
         if nvll_carte is None:
-            print("Plus de cartes dans le deck")
             Application.get_instance().get_game_manager().perdu()
             return False
 
@@ -38,10 +34,9 @@ class UIJeu(Jeu):
 
         if self.val > 21:
             if nb_as == 0:
-                print(self, ",Total:", self.val)
-                print("jeu mort")
                 self.val = 0
                 self.cartes = []
-                return True
-            nb_as -= 1
-            self.val -= 10
+            else:
+                nb_as -= 1
+                self.val -= 10
+        return True

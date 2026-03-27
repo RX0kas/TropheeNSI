@@ -10,7 +10,7 @@ from src.graphics.shader import Shader
 import os
 
 class Texte:
-    FichierPolice = "OpenSans-Medium.ttf"
+    FichierPolice = os.path.join("assets","OpenSans-Medium.ttf")
     __chars = dict()
     __loaded = False
     __shader:Shader|None = None
@@ -67,7 +67,34 @@ class Texte:
         glBindVertexArray(0)
         cls.__loaded = True
     
-        cls.__shader = Shader(open(os.path.join("shaders","text.vert")).read(),open(os.path.join("shaders","text.frag")).read())
+        cls.__shader = Shader("""
+#version 330 core
+
+layout (location = 0) in vec4 vertex;
+
+out vec2 TexCoords;
+
+uniform mat4 view_projection_matrix;
+
+void main() {
+    vec3 p = (view_projection_matrix * vec4(vertex.xy, 0.0, 1.0)).xyz;
+    gl_Position = vec4(p,1.0);
+    TexCoords = vertex.zw;
+}
+""","""
+#version 330 core
+
+in vec2 TexCoords;
+out vec4 color;
+
+uniform sampler2D text;
+uniform vec3 textColor;
+
+void main() {
+    vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);
+    color = vec4(textColor, 1.0) * sampled;
+}
+""")
     @staticmethod
     def __ortho(left,right,bottom,top) -> Mat4:
         m =  Mat4()

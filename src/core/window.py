@@ -44,6 +44,7 @@ class Window:
         window_hint(OPENGL_PROFILE, OPENGL_CORE_PROFILE)
         window_hint(VISIBLE, GL_FALSE)
         window_hint(OPENGL_FORWARD_COMPAT, GL_TRUE)
+        window_hint(RESIZABLE, FALSE)
         # Anti-Aliasing
         window_hint(SAMPLES, 16)
         

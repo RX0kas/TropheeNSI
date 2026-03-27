@@ -37,7 +37,7 @@ class Bouton(Drawable):
         if event.action == glfw.RELEASE and event.button == glfw.MOUSE_BUTTON_1:
             self.__clicked = False
 
-    def ajouter_callback(self,fn:Callable[["Bouton",Any],None],args:tuple|None=None,kargs:dict|None=None):
+    def ajouter_callback(self,fn,args:tuple|None=None,kargs:dict|None=None):
         if args is None:
             args = ()
         if kargs is None:

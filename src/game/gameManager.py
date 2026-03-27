@@ -17,6 +17,7 @@ class GameManager:
         self.btn_pressed = NONE
         self.jeu_cibles = []
         self.en_attente_choix = False
+        self.a_perdu = False
     
     # appeler avant d'ouvrir l'application
     def setup(self):
@@ -75,10 +76,9 @@ class GameManager:
 
     def perdu(self):
         self.running = False
-        # TODO: afficher
-        print("Perdu")
+        self.a_perdu = True
 
     def gagner(self):
         self.running = False
-        # TODO: afficher
+        # TODO: afficher et relancer en plus dure
         print("Gagner")

@@ -18,17 +18,16 @@ class UIManager:
     """
     Class qui sert a dessiner l'interface
     """
-    __spriteCarte: dict[str, Sprite] = {}
-    __boutonSelection: list[Bouton] = []  # type: ignore
-    __boutonJouer: Bouton = None  # type: ignore
-    __boutonDefausse: Bouton = None  # type: ignore
-    __boutonPrendre: Bouton = None  # type: ignore
-    __boutonRester: Bouton = None  # type: ignore
+    __spriteCarte:dict[str, Sprite] = {}
+    __boutonSelection:list[Bouton] = []
+    __boutonJouer:Bouton = None
+    __boutonDefausse:Bouton = None
+    __boutonPrendre:Bouton = None 
+    __boutonRester:Bouton = None
 
-    __spriteRendererRef: SpriteRenderer = None  # type: ignore
-    __gameManagerRef: GameManager = None  # type: ignore
+    __spriteRendererRef:SpriteRenderer = None
+    __gameManagerRef:GameManager = None
 
-    __lastBtnPressed = NONE  # 1 -> Jouer, 2 -> défausser
 
     @classmethod
     def get_card_sprite(cls, val: str | int, cou: str | int) -> Sprite:
@@ -39,7 +38,8 @@ class UIManager:
             valStr: str = Carte.dict_transi_val[val]
             couStr: str = Carte.dict_transi_cou[cou]
             carte = cls.__spriteCarte.get(valStr + couStr)
-
+        if carte is None:
+            raise TypeError()
         return carte
 
     @classmethod
@@ -177,7 +177,8 @@ class UIManager:
             from src.core.application import Application
             cls.__gameManagerRef = Application.get_instance().get_game_manager()
 
-        cls.__draw_main_proposer()
+        if not cls.__gameManagerRef.a_perdu:
+            cls.__draw_main_proposer()
         cls.__draw_texte()
 
     @classmethod
@@ -215,3 +216,5 @@ class UIManager:
         cls.__spriteRendererRef.envoyer(cls.__boutonDefausse)
         cls.__spriteRendererRef.envoyer(cls.__boutonPrendre)
         cls.__spriteRendererRef.envoyer(cls.__boutonRester)
+        if cls.__gameManagerRef.a_perdu:
+            Texte.render_text("Perdu",-70,0,1,Vec3())

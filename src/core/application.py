@@ -28,7 +28,7 @@ class Application:
         else:
             print("Une Application existe déja")
             exit(1)
-        self.__fenetre = Window(800, 600, "Trophe NSI")
+        self.__fenetre = Window(800, 600, "Trophe NSI - BlackJack")
         from OpenGL.GL import glGetString, GL_VERSION
         try:
             print("PyOpenGL GL_VERSION:", glGetString(GL_VERSION))
@@ -84,9 +84,9 @@ void main() {
         self.__camera = Camera()
         self.__sprite_renderer = SpriteRenderer(self.__main_shader)
         Texte.loadCharacters()
-        UIManager.load_cards()
-        
         self.__game_manager = GameManager()
+
+        UIManager.load_cards()
 
     def run(self):
         self.__fenetre.show()
